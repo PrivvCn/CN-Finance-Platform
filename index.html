@@ -7,68 +7,79 @@
   <title>CN Finance</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
   <div class="app">
+
     <header>
       <h1>CN Finance</h1>
       <p>Command. Navigate. Succeed.</p>
     </header>
 
     <main>
+
+      <!-- ÁREA DE ACESSO -->
       <section class="resultado" id="acesso">
-  <h2>Acesso à CN Finance</h2>
+        <h2>Acesso à CN Finance</h2>
 
-  <label for="email">Email</label>
-  <input id="email" type="email" placeholder="O teu email">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="O teu email">
 
-  <label for="senha">Palavra-passe</label>
-  <input id="senha" type="password" placeholder="A tua palavra-passe">
+        <label for="senha">Palavra-passe</label>
+        <input id="senha" type="password" placeholder="A tua palavra-passe">
 
-  <button id="registar">Criar conta</button>
-  <button id="entrar">Iniciar sessão</button>
-  <button id="sair" style="display:none;">Terminar sessão</button>
+        <button type="button" id="registar">Criar conta</button>
+        <button type="button" id="entrar">Iniciar sessão</button>
 
-  <p id="mensagemAcesso">Cria uma conta ou inicia sessão.</p>
-</section>
-      <h2>Gestão Financeira</h2>
-
-      <label for="descricao">Descrição do movimento</label>
-      <input id="descricao" type="text" placeholder="Ex.: Venda de serviços">
-
-      <label for="tipo">Tipo de movimento</label>
-      <select id="tipo">
-        <option value="receita">Receita</option>
-        <option value="despesa">Despesa</option>
-      </select>
-
-      <label for="valor">Valor (MT)</label>
-      <input id="valor" type="number" min="0.01" step="0.01" placeholder="Ex.: 15000">
-
-      <button id="adicionar">Adicionar movimento</button>
-
-      <section class="resultado">
-        <p>Saldo financeiro</p>
-        <h2 id="resultado">0,00 MT</h2>
-        <p id="situacao">Adiciona o teu primeiro movimento.</p>
-
-        <div class="detalhes">
-          <span>Total de receitas</span>
-          <strong id="totalReceitas">0,00 MT</strong>
-        </div>
-
-        <div class="detalhes">
-          <span>Total de despesas</span>
-          <strong id="totalDespesas">0,00 MT</strong>
-        </div>
+        <p id="mensagemAcesso">Cria uma conta ou inicia sessão.</p>
       </section>
 
-      <section class="resultado">
-        <h2>Histórico de movimentos</h2>
-        <ul id="historico">
-          <li>Ainda não existem movimentos.</li>
-        </ul>
-      </section>
+      <!-- ÁREA FINANCEIRA -->
+      <div id="painelFinanceiro" hidden>
+
+        <section class="resultado">
+          <h2>Gestão Financeira</h2>
+
+          <label for="descricao">Descrição do movimento</label>
+          <input id="descricao" type="text" placeholder="Ex.: Venda de serviços">
+
+          <label for="tipo">Tipo de movimento</label>
+          <select id="tipo">
+            <option value="receita">Receita</option>
+            <option value="despesa">Despesa</option>
+          </select>
+
+          <label for="valor">Valor (MT)</label>
+          <input id="valor" type="number" min="0.01" step="0.01" placeholder="Ex.: 15000">
+
+          <button type="button" id="adicionar">Adicionar movimento</button>
+        </section>
+
+        <section class="resultado">
+          <p>Saldo financeiro</p>
+          <h2 id="resultado">0,00 MT</h2>
+          <p id="situacao">Adiciona o teu primeiro movimento.</p>
+
+          <div class="detalhes">
+            <span>Total de receitas</span>
+            <strong id="totalReceitas">0,00 MT</strong>
+          </div>
+
+          <div class="detalhes">
+            <span>Total de despesas</span>
+            <strong id="totalDespesas">0,00 MT</strong>
+          </div>
+        </section>
+
+        <section class="resultado">
+          <h2>Histórico de movimentos</h2>
+          <ul id="historico">
+            <li>Ainda não existem movimentos.</li>
+          </ul>
+        </section>
+
+        <button type="button" id="sair">Terminar sessão</button>
+
+      </div>
     </main>
 
     <footer>CN Finance © 2026</footer>
