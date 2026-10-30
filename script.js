@@ -1,5 +1,11 @@
 
-alert("JavaScript carregado!");
+const SUPABASE_URL = "https://zmjahwuaqkddbkbrqkdw.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_xDCWQlrTKc0arXNQhqKqUw_u4A325XP";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 const descricaoInput = document.getElementById("descricao");
 const tipoInput = document.getElementById("tipo");
