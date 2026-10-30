@@ -250,6 +250,10 @@ footer {
   }
 
   h2 {
+     #acesso[hidden],
+#painelFinanceiro[hidden] {
+  display: none !important;
+}
     font-size: 19px;
   }
 
