@@ -1,5 +1,5 @@
 
-const SUPABASE_URL = "https://zmjahwuaqkddbkbrqkdw.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://zmjahwuaqkddbkbrqkdw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_xDCWQlrTKc0arXNQhqKqUw_u4A325XP";
 
 const supabaseClient = window.supabase.createClient(
@@ -73,7 +73,8 @@ async function carregarMovimentos() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    situacaoTexto.textContent = "Erro ao carregar movimentos: " + error.message;
+    situacaoTexto.textContent =
+      "Erro ao carregar movimentos: " + error.message;
     return;
   }
 
@@ -93,7 +94,8 @@ botaoAdicionar.addEventListener("click", async function () {
   const valor = Number(valorInput.value);
 
   if (descricao === "") {
-    situacaoTexto.textContent = "Introduz a descrição do movimento.";
+    situacaoTexto.textContent =
+      "Introduz a descrição do movimento.";
     return;
   }
 
@@ -102,7 +104,8 @@ botaoAdicionar.addEventListener("click", async function () {
     !Number.isFinite(valor) ||
     valor <= 0
   ) {
-    situacaoTexto.textContent = "Introduz um valor maior que zero.";
+    situacaoTexto.textContent =
+      "Introduz um valor maior que zero.";
     return;
   }
 
@@ -118,7 +121,8 @@ botaoAdicionar.addEventListener("click", async function () {
     .single();
 
   if (error) {
-    situacaoTexto.textContent = "Erro ao guardar: " + error.message;
+    situacaoTexto.textContent =
+      "Erro ao guardar: " + error.message;
     return;
   }
 
@@ -303,13 +307,17 @@ botaoRegistar.addEventListener("click", async function () {
   const senha = senhaInput.value;
 
   if (!email || !senha) {
-    mensagemAcesso.textContent = "Preenche o email e a palavra-passe.";
+    mensagemAcesso.textContent =
+      "Preenche o email e a palavra-passe.";
     return;
   }
 
   const { error } = await supabaseClient.auth.signUp({
     email: email,
-    password: senha
+    password: senha,
+    options: {
+      emailRedirectTo: "https://privvcn.github.io/CN-Finance-Platform/"
+    }
   });
 
   if (error) {
@@ -327,7 +335,8 @@ botaoEntrar.addEventListener("click", async function () {
   const senha = senhaInput.value;
 
   if (!email || !senha) {
-    mensagemAcesso.textContent = "Preenche o email e a palavra-passe.";
+    mensagemAcesso.textContent =
+      "Preenche o email e a palavra-passe.";
     return;
   }
 
