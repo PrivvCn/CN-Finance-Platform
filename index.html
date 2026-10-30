@@ -1,52 +1,64 @@
 
-<div class="app">
-  <header>
-    <h1>CN Finance</h1>
-    <p>Command. Navigate. Succeed.</p>
-  </header>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CN Finance</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-  <main>
-    <h2>Gestão Financeira</h2>
+<body>
+  <div class="app">
+    <header>
+      <h1>CN Finance</h1>
+      <p>Command. Navigate. Succeed.</p>
+    </header>
 
-    <label for="descricao">Descrição do movimento</label>
-    <input id="descricao" type="text"
-      placeholder="Ex.: Venda de serviços">
+    <main>
+      <h2>Gestão Financeira</h2>
 
-    <label for="tipo">Tipo de movimento</label>
-    <select id="tipo">
-      <option value="receita">Receita</option>
-      <option value="despesa">Despesa</option>
-    </select>
+      <label for="descricao">Descrição do movimento</label>
+      <input id="descricao" type="text" placeholder="Ex.: Venda de serviços">
 
-    <label for="valor">Valor (MT)</label>
-    <input id="valor" type="number" min="0.01"
-      step="0.01" placeholder="Ex.: 15000">
+      <label for="tipo">Tipo de movimento</label>
+      <select id="tipo">
+        <option value="receita">Receita</option>
+        <option value="despesa">Despesa</option>
+      </select>
 
-    <button id="adicionar">Adicionar movimento</button>
+      <label for="valor">Valor (MT)</label>
+      <input id="valor" type="number" min="0.01" step="0.01" placeholder="Ex.: 15000">
 
-    <section class="resultado">
-      <p>Saldo financeiro</p>
-      <h2 id="resultado">0,00 MT</h2>
-      <p id="situacao">Adiciona o teu primeiro movimento.</p>
+      <button id="adicionar">Adicionar movimento</button>
 
-      <div class="detalhes">
-        <span>Total de receitas</span>
-        <strong id="totalReceitas">0,00 MT</strong>
-      </div>
+      <section class="resultado">
+        <p>Saldo financeiro</p>
+        <h2 id="resultado">0,00 MT</h2>
+        <p id="situacao">Adiciona o teu primeiro movimento.</p>
 
-      <div class="detalhes">
-        <span>Total de despesas</span>
-        <strong id="totalDespesas">0,00 MT</strong>
-      </div>
-    </section>
+        <div class="detalhes">
+          <span>Total de receitas</span>
+          <strong id="totalReceitas">0,00 MT</strong>
+        </div>
 
-    <section class="resultado">
-      <h2>Histórico de movimentos</h2>
-      <ul id="historico">
-        <li>Ainda não existem movimentos.</li>
-      </ul>
-    </section>
-  </main>
+        <div class="detalhes">
+          <span>Total de despesas</span>
+          <strong id="totalDespesas">0,00 MT</strong>
+        </div>
+      </section>
 
-  <footer>CN Finance © 2026</footer>
-</div>
+      <section class="resultado">
+        <h2>Histórico de movimentos</h2>
+        <ul id="historico">
+          <li>Ainda não existem movimentos.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>CN Finance © 2026</footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
