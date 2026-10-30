@@ -1,4 +1,6 @@
 
+alert("JavaScript carregado!");
+
 const descricaoInput = document.getElementById("descricao");
 const tipoInput = document.getElementById("tipo");
 const valorInput = document.getElementById("valor");
@@ -13,9 +15,7 @@ const historicoLista = document.getElementById("historico");
 let movimentos = [];
 
 try {
-  movimentos = JSON.parse(
-    localStorage.getItem("cnMovimentos") || "[]"
-  );
+  movimentos = JSON.parse(localStorage.getItem("cnMovimentos") || "[]");
 
   if (!Array.isArray(movimentos)) {
     movimentos = [];
@@ -37,33 +37,23 @@ botaoAdicionar.addEventListener("click", function () {
   const valor = Number(valorInput.value);
 
   if (descricao === "") {
-    situacaoTexto.textContent =
-      "Introduz a descrição do movimento.";
+    situacaoTexto.textContent = "Introduz a descrição do movimento.";
     return;
   }
 
   if (valorInput.value.trim() === "" ||
       !Number.isFinite(valor) || valor <= 0) {
-    situacaoTexto.textContent =
-      "Introduz um valor maior que zero.";
+    situacaoTexto.textContent = "Introduz um valor maior que zero.";
     return;
   }
 
-  movimentos.push({
-    descricao: descricao,
-    tipo: tipo,
-    valor: valor
-  });
+  movimentos.push({ descricao, tipo, valor });
 
   try {
-    localStorage.setItem(
-      "cnMovimentos",
-      JSON.stringify(movimentos)
-    );
+    localStorage.setItem("cnMovimentos", JSON.stringify(movimentos));
   } catch (erro) {
-    situacaoTexto.textContent =
-      "Não foi possível guardar os movimentos.";
     movimentos.pop();
+    situacaoTexto.textContent = "Não foi possível guardar os movimentos.";
     return;
   }
 
@@ -80,128 +70,96 @@ function atualizarResumo() {
 
   historicoLista.replaceChildren();
 
- 
-movimentos.forEach(function (movimento, index) {
-  const item = document.createElement("li");
-  const sinal = movimento.tipo === "receita" ? "+" : "-";
+  movimentos.forEach(function (movimento, index) {
+    const item = document.createElement("li");
+    const sinal = movimento.tipo === "receita" ? "+" : "-";
 
-  const texto = document.createElement("span");
-  texto.textContent =
-    movimento.descricao + " — " +
-    movimento.tipo + ": " +
-    sinal + formatarMT(movimento.valor);
+    const texto = document.createElement("span");
+    texto.textContent =
+      movimento.descricao + " — " +
+      movimento.tipo + ": " +
+      sinal + formatarMT(movimento.valor);
 
-  const botaoEliminar = document.createElement("button");
-  botaoEliminar.textContent = "Eliminar";
-  const botaoEditar = document.createElement("button");
-botaoEditar.textContent = "Editar";
-botaoEditar.type = "button";
-botaoEditar.style.marginLeft = "10px";
-botaoEditar.style.marginTop = "0";
-botaoEditar.style.width = "auto";
-botaoEditar.style.padding = "6px 10px";
-botaoEditar.style.fontSize = "13px";
-  
-botaoEditar.addEventListener("click", function () {
-  const novaDescricao = prompt(
-    "Nova descrição:",
-    movimento.descricao
-  );
+    const botaoEditar = document.createElement("button");
+    botaoEditar.textContent = "Editar";
+    botaoEditar.type = "button";
+    botaoEditar.style.width = "auto";
 
-  if (novaDescricao === null) return;
+    botaoEditar.addEventListener("click", function () {
+      const novaDescricao = prompt("Nova descrição:", movimento.descricao);
+      if (novaDescricao === null) return;
 
-  const descricaoLimpa = novaDescricao.trim();
+      const descricaoLimpa = novaDescricao.trim();
+      if (descricaoLimpa === "") {
+        alert("A descrição não pode ficar vazia.");
+        return;
+      }
 
-  if (descricaoLimpa === "") {
-    alert("A descrição não pode ficar vazia.");
-    return;
-  }
+      const novoTipo = prompt("Escreve receita ou despesa:", movimento.tipo);
+      if (novoTipo === null) return;
 
-  const novoTipo = prompt(
-    "Escreve receita ou despesa:",
-    movimento.tipo
-  );
+      const tipoLimpo = novoTipo.trim().toLowerCase();
+      if (tipoLimpo !== "receita" && tipoLimpo !== "despesa") {
+        alert("Escreve receita ou despesa.");
+        return;
+      }
 
-  if (novoTipo === null) return;
+      const novoValorTexto = prompt("Novo valor em MT:", String(movimento.valor));
+      if (novoValorTexto === null) return;
 
-  const tipoLimpo = novoTipo.trim().toLowerCase();
+      const novoValor = Number(novoValorTexto);
+      if (novoValorTexto.trim() === "" ||
+          !Number.isFinite(novoValor) || novoValor <= 0) {
+        alert("Introduz um valor maior que zero.");
+        return;
+      }
 
-  if (tipoLimpo !== "receita" &&
-      tipoLimpo !== "despesa") {
-    alert("Escreve receita ou despesa.");
-    return;
-  }
+      const antigo = { ...movimento };
 
-  const novoValorTexto = prompt(
-    "Novo valor em MT:",
-    String(movimento.valor)
-  );
+      movimento.descricao = descricaoLimpa;
+      movimento.tipo = tipoLimpo;
+      movimento.valor = novoValor;
 
-  if (novoValorTexto === null) return;
+      try {
+        localStorage.setItem("cnMovimentos", JSON.stringify(movimentos));
+      } catch (erro) {
+        Object.assign(movimento, antigo);
+        alert("Não foi possível guardar a alteração.");
+        return;
+      }
 
-  const novoValor = Number(novoValorTexto);
+      atualizarResumo();
+    });
 
-  if (novoValorTexto.trim() === "" ||
-      !Number.isFinite(novoValor) ||
-      novoValor <= 0) {
-    alert("Introduz um valor maior que zero.");
-    return;
-  }
+    const botaoEliminar = document.createElement("button");
+    botaoEliminar.textContent = "Eliminar";
+    botaoEliminar.type = "button";
+    botaoEliminar.style.width = "auto";
 
-  const movimentoAntigo = { ...movimento };
+    botaoEliminar.addEventListener("click", function () {
+      const confirmar = confirm(
+        "Tens a certeza de que queres eliminar este movimento?"
+      );
 
-  movimento.descricao = descricaoLimpa;
-  movimento.tipo = tipoLimpo;
-  movimento.valor = novoValor;
+      if (!confirmar) return;
 
-  try {
-    localStorage.setItem(
-      "cnMovimentos",
-      JSON.stringify(movimentos)
-    );
-  } catch (erro) {
-    Object.assign(movimento, movimentoAntigo);
-    alert("Não foi possível guardar a alteração.");
-    return;
-  }
+      movimentos.splice(index, 1);
 
-  atualizarResumo();
-});
+      localStorage.setItem("cnMovimentos", JSON.stringify(movimentos));
+      atualizarResumo();
+    });
 
-  botaoEliminar.type = "button";
-  botaoEliminar.style.marginLeft = "10px";
-  botaoEliminar.style.marginTop = "0";
-  botaoEliminar.style.width = "auto";
-  botaoEliminar.style.padding = "6px 10px";
-  botaoEliminar.style.fontSize = "13px";
-  botaoEliminar.addEventListener("click", function () {
-    const confirmar = window.confirm(
-      "Tens a certeza de que queres eliminar este movimento?"
-    );
+    item.appendChild(texto);
+    item.appendChild(botaoEditar);
+    item.appendChild(botaoEliminar);
+    historicoLista.appendChild(item);
 
-    if (!confirmar) return;
-
-    movimentos.splice(index, 1);
-
-    localStorage.setItem(
-      "cnMovimentos",
-      JSON.stringify(movimentos)
-    );
-
-    atualizarResumo();
+    if (movimento.tipo === "receita") {
+      receitas += movimento.valor;
+    } else {
+      despesas += movimento.valor;
+    }
   });
-
-  item.appendChild(texto);
-  item.appendChild(botaoEditar);
-  item.appendChild(botaoEliminar);
-  historicoLista.appendChild(item);
-
-  if (movimento.tipo === "receita") {
-    receitas += movimento.valor;
-  } else {
-    despesas += movimento.valor;
-  }
-});
 
   const saldo = receitas - despesas;
 
