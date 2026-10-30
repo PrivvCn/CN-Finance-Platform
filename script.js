@@ -7,18 +7,6 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_KEY
 );
 
-// Elementos financeiros
-const descricaoInput = document.getElementById("descricao");
-const tipoInput = document.getElementById("tipo");
-const valorInput = document.getElementById("valor");
-const botaoAdicionar = document.getElementById("adicionar");
-
-const resultadoTexto = document.getElementById("resultado");
-const situacaoTexto = document.getElementById("situacao");
-const totalReceitasTexto = document.getElementById("totalReceitas");
-const totalDespesasTexto = document.getElementById("totalDespesas");
-const historicoLista = document.getElementById("historico");
-
 // Elementos de acesso
 const emailInput = document.getElementById("email");
 const senhaInput = document.getElementById("senha");
@@ -26,43 +14,46 @@ const botaoRegistar = document.getElementById("registar");
 const botaoEntrar = document.getElementById("entrar");
 const botaoSair = document.getElementById("sair");
 const mensagemAcesso = document.getElementById("mensagemAcesso");
+const acessoSection = document.getElementById("acesso");
 
-let movimentos = [];
-let utilizadorAtual = null;
+// Elementos financeiros
+const descricaoInput = document.getElementById("descricao");
+const tipoInput = document.getElementById("tipo");
+const valorInput = document.getElementById("valor");
+const botaoAdicionar = document.getElementById("adicionar");
+const saldoElemento = document.getElementById("resultado");
+const situacaoElemento = document.getElementById("situacao");
+const receitasElemento = document.getElementById("totalReceitas");
+const despesasElemento = document.getElementById("totalDespesas");
+const historicoElemento = document.getElementById("historico");
 
-// Verificar elementos essenciais
-const elementosObrigatorios = [
+const elementosFinanceiros = [
   descricaoInput, tipoInput, valorInput, botaoAdicionar,
-  resultadoTexto, situacaoTexto, totalReceitasTexto,
-  totalDespesasTexto, historicoLista, emailInput,
-  senhaInput, botaoRegistar, botaoEntrar,
-  botaoSair, mensagemAcesso
+  saldoElemento, situacaoElemento, receitasElemento,
+  despesasElemento, historicoElemento
 ];
 
-if (elementosObrigatorios.some(elemento => !elemento)) {
-  throw new Error("Faltam elementos HTML necessários para a CN Finance.");
+let utilizadorAtual = null;
+let movimentos = [];
+
+function mostrarMensagem(texto) {
+  if (mensagemAcesso) mensagemAcesso.textContent = texto;
 }
-
-const acessoSection = document.getElementById("acesso");
-const main = document.querySelector("main");
-
-if (!acessoSection || !main) {
-  throw new Error("Não foi encontrada a secção de acesso ou o elemento main.");
-}
-
-const elementosFinanceiros = Array.from(main.children)
-  .filter(elemento => elemento !== acessoSection);
 
 function atualizarAcesso() {
   const autenticado = Boolean(utilizadorAtual);
 
+  if (acessoSection) acessoSection.hidden = autenticado;
+
   elementosFinanceiros.forEach(elemento => {
-    elemento.hidden = !autenticado;
+    if (elemento) {
+      elemento.closest("section")?.removeAttribute("hidden");
+    }
   });
 
-  botaoRegistar.style.display = autenticado ? "none" : "block";
-  botaoEntrar.style.display = autenticado ? "none" : "block";
-  botaoSair.style.display = autenticado ? "block" : "none";
+  if (botaoSair) {
+    botaoSair.hidden = !autenticado;
+  }
 
   if (!autenticado) {
     movimentos = [];
@@ -70,14 +61,13 @@ function atualizarAcesso() {
   }
 }
 
-function formatarMT(valor) {
-  return Number(valor).toLocaleString("pt-PT", {
+function formatarValor(valor) {
+  return Number(valor).toLocaleString("pt-MZ", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }) + " MT";
 }
 
-// Carregar movimentos
 async function carregarMovimentos() {
   if (!utilizadorAtual) return;
 
@@ -88,8 +78,8 @@ async function carregarMovimentos() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    situacaoTexto.textContent =
-      "Erro ao carregar: " + error.message;
+    console.error(error);
+    mostrarMensagem("Erro ao carregar movimentos.");
     return;
   }
 
@@ -97,8 +87,57 @@ async function carregarMovimentos() {
   atualizarResumo();
 }
 
-// Adicionar movimento
-botaoAdicionar.addEventListener("click", async function () {
+function atualizarResumo() {
+  const receitas = movimentos
+    .filter(m => m.tipo === "receita")
+    .reduce((total, m) => total + Number(m.valor), 0);
+
+  const despesas = movimentos
+    .filter(m => m.tipo === "despesa")
+    .reduce((total, m) => total + Number(m.valor), 0);
+
+  const saldo = receitas - despesas;
+
+  if (saldoElemento) saldoElemento.textContent = formatarValor(saldo);
+  if (receitasElemento) receitasElemento.textContent = formatarValor(receitas);
+  if (despesasElemento) despesasElemento.textContent = formatarValor(despesas);
+
+  if (situacaoElemento) {
+    situacaoElemento.textContent =
+      saldo > 0 ? "Lucro" :
+      saldo < 0 ? "Prejuízo" : "Equilíbrio";
+  }
+
+  if (!historicoElemento) return;
+
+  historicoElemento.innerHTML = "";
+
+  if (movimentos.length === 0) {
+    historicoElemento.innerHTML = "<li>Ainda não existem movimentos.</li>";
+    return;
+  }
+
+  movimentos.forEach(movimento => {
+    const item = document.createElement("li");
+    const texto = document.createElement("span");
+
+    texto.textContent =
+      `${movimento.descricao} — ${movimento.tipo} — ${formatarValor(movimento.valor)} `;
+
+    const editar = document.createElement("button");
+    editar.textContent = "Editar";
+    editar.onclick = () => editarMovimento(movimento);
+
+    const apagar = document.createElement("button");
+    apagar.textContent = "Eliminar";
+    apagar.onclick = () => eliminarMovimento(movimento.id);
+
+    item.append(texto, editar, apagar);
+    historicoElemento.appendChild(item);
+  });
+}
+
+async function adicionarMovimento() {
   if (!utilizadorAtual) return;
 
   const descricao = descricaoInput.value.trim();
@@ -106,264 +145,160 @@ botaoAdicionar.addEventListener("click", async function () {
   const valor = Number(valorInput.value);
 
   if (!descricao || !Number.isFinite(valor) || valor <= 0) {
-    situacaoTexto.textContent = "Preenche os campos corretamente.";
+    alert("Preenche corretamente todos os campos.");
     return;
   }
 
-  const { data, error } = await supabaseClient
+  const { error } = await supabaseClient
     .from("movimentos")
     .insert({
       user_id: utilizadorAtual.id,
       descricao,
       tipo,
       valor
-    })
-    .select()
-    .single();
+    });
 
   if (error) {
-    situacaoTexto.textContent = "Erro ao guardar: " + error.message;
+    alert("Não foi possível adicionar o movimento.");
+    console.error(error);
     return;
   }
-
-  movimentos.unshift(data);
-  atualizarResumo();
 
   descricaoInput.value = "";
   valorInput.value = "";
-});
+  await carregarMovimentos();
+}
 
-// Atualizar resumo
-function atualizarResumo() {
-  let receitas = 0;
-  let despesas = 0;
+async function editarMovimento(movimento) {
+  const novaDescricao = prompt("Nova descrição:", movimento.descricao);
+  if (novaDescricao === null) return;
 
-  historicoLista.replaceChildren();
+  const novoValorTexto = prompt("Novo valor:", movimento.valor);
+  if (novoValorTexto === null) return;
 
-  if (movimentos.length === 0) {
-    const item = document.createElement("li");
-    item.textContent = "Ainda não existem movimentos.";
-    historicoLista.appendChild(item);
+  const novoValor = Number(novoValorTexto);
+
+  if (!novaDescricao.trim() || !Number.isFinite(novoValor) || novoValor <= 0) {
+    alert("Dados inválidos.");
+    return;
   }
 
-  movimentos.forEach(movimento => {
-    const valor = Number(movimento.valor);
-    const item = document.createElement("li");
-    const texto = document.createElement("span");
+  const { error } = await supabaseClient
+    .from("movimentos")
+    .update({
+      descricao: novaDescricao.trim(),
+      valor: novoValor
+    })
+    .eq("id", movimento.id)
+    .eq("user_id", utilizadorAtual.id);
 
-    texto.textContent =
-      movimento.descricao + " — " +
-      movimento.tipo + ": " +
-      (movimento.tipo === "receita" ? "+" : "-") +
-      formatarMT(valor);
+  if (error) {
+    alert("Erro ao editar movimento.");
+    console.error(error);
+    return;
+  }
 
-    const botaoEditar = document.createElement("button");
-    botaoEditar.textContent = "Editar";
-    botaoEditar.type = "button";
+  await carregarMovimentos();
+}
 
-    botaoEditar.addEventListener("click", async function () {
-      const descricao = prompt("Nova descrição:", movimento.descricao);
-      if (descricao === null) return;
+async function eliminarMovimento(id) {
+  if (!confirm("Tens a certeza que queres eliminar este movimento?")) return;
 
-      const tipo = prompt("Escreve receita ou despesa:", movimento.tipo);
-      if (tipo === null) return;
+  const { error } = await supabaseClient
+    .from("movimentos")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", utilizadorAtual.id);
 
-      const valorTexto = prompt("Novo valor em MT:", String(valor));
-      if (valorTexto === null) return;
+  if (error) {
+    alert("Erro ao eliminar movimento.");
+    console.error(error);
+    return;
+  }
 
-      const novoTipo = tipo.trim().toLowerCase();
-      const novoValor = Number(valorTexto);
+  await carregarMovimentos();
+}
 
-      if (
-        !descricao.trim() ||
-        !["receita", "despesa"].includes(novoTipo) ||
-        !Number.isFinite(novoValor) ||
-        novoValor <= 0
-      ) {
-        alert("Verifica os dados introduzidos.");
-        return;
-      }
+async function registar() {
+  const email = emailInput.value.trim();
+  const password = senhaInput.value;
 
-      const { data, error } = await supabaseClient
-        .from("movimentos")
-        .update({
-          descricao: descricao.trim(),
-          tipo: novoTipo,
-          valor: novoValor
-        })
-        .eq("id", movimento.id)
-        .eq("user_id", utilizadorAtual.id)
-        .select()
-        .single();
+  if (!email || !password) {
+    mostrarMensagem("Preenche o email e a palavra-passe.");
+    return;
+  }
 
-      if (error) {
-        alert("Erro ao editar: " + error.message);
-        return;
-      }
-
-      movimentos = movimentos.map(item =>
-        item.id === movimento.id ? data : item
-      );
-
-      atualizarResumo();
-    });
-
-    const botaoEliminar = document.createElement("button");
-    botaoEliminar.textContent = "Eliminar";
-    botaoEliminar.type = "button";
-
-    botaoEliminar.addEventListener("click", async function () {
-      if (!confirm("Queres eliminar este movimento?")) return;
-
-      const { error } = await supabaseClient
-        .from("movimentos")
-        .delete()
-        .eq("id", movimento.id)
-        .eq("user_id", utilizadorAtual.id);
-
-      if (error) {
-        alert("Erro ao eliminar: " + error.message);
-        return;
-      }
-
-      movimentos = movimentos.filter(item => item.id !== movimento.id);
-      atualizarResumo();
-    });
-
-    item.appendChild(texto);
-    item.appendChild(botaoEditar);
-    item.appendChild(botaoEliminar);
-    historicoLista.appendChild(item);
-
-    if (movimento.tipo === "receita") {
-      receitas += valor;
-    } else {
-      despesas += valor;
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: "https://privvcn.github.io/CN-Finance-Platform/"
     }
   });
 
-  const saldo = receitas - despesas;
-
-  totalReceitasTexto.textContent = formatarMT(receitas);
-  totalDespesasTexto.textContent = formatarMT(despesas);
-  resultadoTexto.textContent = formatarMT(saldo);
-
-  if (saldo > 0) {
-    situacaoTexto.textContent = "Situação: Lucro";
-    resultadoTexto.style.color = "#216e49";
-  } else if (saldo < 0) {
-    situacaoTexto.textContent = "Situação: Prejuízo";
-    resultadoTexto.style.color = "#b42318";
-  } else {
-    situacaoTexto.textContent = "Situação: Equilíbrio";
-    resultadoTexto.style.color = "#142b4a";
-  }
+  mostrarMensagem(
+    error ? error.message : "Conta criada! Confirma o teu email."
+  );
 }
 
-// Criar conta
-botaoRegistar.addEventListener("click", async function () {
+async function entrar() {
   const email = emailInput.value.trim();
-  const senha = senhaInput.value;
+  const password = senhaInput.value;
 
-  if (!email || !senha) {
-    mensagemAcesso.textContent = "Preenche o email e a palavra-passe.";
+  if (!email || !password) {
+    mostrarMensagem("Preenche o email e a palavra-passe.");
     return;
   }
 
-  botaoRegistar.disabled = true;
-  mensagemAcesso.textContent = "A criar a tua conta...";
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
 
-  try {
-    const { data, error } = await supabaseClient.auth.signUp({
-      email,
-      password: senha,
-      options: {
-        emailRedirectTo: "https://privvcn.github.io/CN-Finance-Platform/"
-      }
-    });
-
-    if (error) throw error;
-
-    mensagemAcesso.textContent = data.session
-      ? "Conta criada e sessão iniciada!"
-      : "Conta criada! Verifica o teu email para confirmar.";
-  } catch (erro) {
-    mensagemAcesso.textContent = "Erro no registo: " + erro.message;
-  } finally {
-    botaoRegistar.disabled = false;
-  }
-});
-
-// Iniciar sessão
-botaoEntrar.addEventListener("click", async function () {
-  const email = emailInput.value.trim();
-  const senha = senhaInput.value;
-
-  if (!email || !senha) {
-    mensagemAcesso.textContent = "Preenche o email e a palavra-passe.";
+  if (error) {
+    mostrarMensagem(error.message);
     return;
   }
 
-  botaoEntrar.disabled = true;
-  mensagemAcesso.textContent = "A iniciar sessão...";
+  mostrarMensagem("Sessão iniciada!");
+}
 
-  try {
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password: senha
-    });
-
-    if (error) throw error;
-  } catch (erro) {
-    mensagemAcesso.textContent = "Erro ao entrar: " + erro.message;
-  } finally {
-    botaoEntrar.disabled = false;
-  }
-});
-
-// Terminar sessão
-botaoSair.addEventListener("click", async function () {
+async function sair() {
   const { error } = await supabaseClient.auth.signOut();
 
   if (error) {
-    mensagemAcesso.textContent = "Erro ao sair: " + error.message;
-    return;
+    mostrarMensagem(error.message);
   }
+}
 
-  mensagemAcesso.textContent = "Sessão terminada.";
-});
+botaoRegistar?.addEventListener("click", registar);
+botaoEntrar?.addEventListener("click", entrar);
+botaoSair?.addEventListener("click", sair);
+botaoAdicionar?.addEventListener("click", adicionarMovimento);
 
-// Acompanhar sessão
-supabaseClient.auth.onAuthStateChange((evento, session) => {
-  utilizadorAtual = session ? session.user : null;
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
+  utilizadorAtual = session?.user || null;
   atualizarAcesso();
 
   if (utilizadorAtual) {
-    mensagemAcesso.textContent =
-      "Sessão iniciada: " + utilizadorAtual.email;
-
-    carregarMovimentos();
-  } else {
-    mensagemAcesso.textContent = "Cria uma conta ou inicia sessão.";
+    await carregarMovimentos();
   }
 });
 
-// Verificar sessão existente
 async function iniciarAplicacao() {
-  try {
-    const { data, error } = await supabaseClient.auth.getSession();
+  const { data, error } = await supabaseClient.auth.getSession();
 
-    if (error) throw error;
+  if (error) {
+    mostrarMensagem("Erro ao verificar sessão.");
+    console.error(error);
+    return;
+  }
 
-    utilizadorAtual = data.session ? data.session.user : null;
-    atualizarAcesso();
+  utilizadorAtual = data.session?.user || null;
+  atualizarAcesso();
 
-    if (utilizadorAtual) {
-      await carregarMovimentos();
-    }
-  } catch (erro) {
-    mensagemAcesso.textContent =
-      "Erro ao iniciar CN Finance: " + erro.message;
+  if (utilizadorAtual) {
+    await carregarMovimentos();
   }
 }
 
