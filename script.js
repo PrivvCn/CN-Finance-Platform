@@ -7,58 +7,36 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_KEY
 );
 
-// Elementos de acesso
+// Elementos da página
+const acesso = document.getElementById("acesso");
+const painel = document.getElementById("painelFinanceiro");
+
 const emailInput = document.getElementById("email");
 const senhaInput = document.getElementById("senha");
-const botaoRegistar = document.getElementById("registar");
-const botaoEntrar = document.getElementById("entrar");
-const botaoSair = document.getElementById("sair");
 const mensagemAcesso = document.getElementById("mensagemAcesso");
-const acessoSection = document.getElementById("acesso");
 
-// Elementos financeiros
 const descricaoInput = document.getElementById("descricao");
 const tipoInput = document.getElementById("tipo");
 const valorInput = document.getElementById("valor");
-const botaoAdicionar = document.getElementById("adicionar");
+
 const saldoElemento = document.getElementById("resultado");
 const situacaoElemento = document.getElementById("situacao");
 const receitasElemento = document.getElementById("totalReceitas");
 const despesasElemento = document.getElementById("totalDespesas");
 const historicoElemento = document.getElementById("historico");
 
-const elementosFinanceiros = [
-  descricaoInput, tipoInput, valorInput, botaoAdicionar,
-  saldoElemento, situacaoElemento, receitasElemento,
-  despesasElemento, historicoElemento
-];
-
 let utilizadorAtual = null;
 let movimentos = [];
 
-function mostrarMensagem(texto) {
-  if (mensagemAcesso) mensagemAcesso.textContent = texto;
+function mensagem(texto) {
+  mensagemAcesso.textContent = texto;
 }
 
-function atualizarAcesso() {
+function atualizarInterface() {
   const autenticado = Boolean(utilizadorAtual);
 
-  if (acessoSection) acessoSection.hidden = autenticado;
-
-  elementosFinanceiros.forEach(elemento => {
-    if (elemento) {
-      elemento.closest("section")?.removeAttribute("hidden");
-    }
-  });
-
-  if (botaoSair) {
-    botaoSair.hidden = !autenticado;
-  }
-
-  if (!autenticado) {
-    movimentos = [];
-    atualizarResumo();
-  }
+  acesso.hidden = autenticado;
+  painel.hidden = !autenticado;
 }
 
 function formatarValor(valor) {
@@ -68,6 +46,67 @@ function formatarValor(valor) {
   }) + " MT";
 }
 
+// Registar conta
+async function registar() {
+  const email = emailInput.value.trim();
+  const password = senhaInput.value;
+
+  if (!email || !password) {
+    mensagem("Preenche o email e a palavra-passe.");
+    return;
+  }
+
+  if (password.length < 6) {
+    mensagem("A palavra-passe deve ter pelo menos 6 caracteres.");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo:
+        "https://privvcn.github.io/CN-Finance-Platform/"
+    }
+  });
+
+  if (error) {
+    mensagem(error.message);
+  } else {
+    mensagem("Conta criada! Confirma o teu email.");
+  }
+}
+
+// Iniciar sessão
+async function entrar() {
+  const email = emailInput.value.trim();
+  const password = senhaInput.value;
+
+  if (!email || !password) {
+    mensagem("Preenche o email e a palavra-passe.");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    mensagem(error.message);
+  }
+}
+
+// Terminar sessão
+async function sair() {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    mensagem(error.message);
+  }
+}
+
+// Carregar movimentos
 async function carregarMovimentos() {
   if (!utilizadorAtual) return;
 
@@ -79,7 +118,7 @@ async function carregarMovimentos() {
 
   if (error) {
     console.error(error);
-    mostrarMensagem("Erro ao carregar movimentos.");
+    alert("Erro ao carregar os movimentos.");
     return;
   }
 
@@ -87,59 +126,58 @@ async function carregarMovimentos() {
   atualizarResumo();
 }
 
+// Atualizar saldo e histórico
 function atualizarResumo() {
   const receitas = movimentos
     .filter(m => m.tipo === "receita")
-    .reduce((total, m) => total + Number(m.valor), 0);
+    .reduce((soma, m) => soma + Number(m.valor), 0);
 
   const despesas = movimentos
     .filter(m => m.tipo === "despesa")
-    .reduce((total, m) => total + Number(m.valor), 0);
+    .reduce((soma, m) => soma + Number(m.valor), 0);
 
   const saldo = receitas - despesas;
 
-  if (saldoElemento) saldoElemento.textContent = formatarValor(saldo);
-  if (receitasElemento) receitasElemento.textContent = formatarValor(receitas);
-  if (despesasElemento) despesasElemento.textContent = formatarValor(despesas);
+  saldoElemento.textContent = formatarValor(saldo);
+  receitasElemento.textContent = formatarValor(receitas);
+  despesasElemento.textContent = formatarValor(despesas);
 
-  if (situacaoElemento) {
-    situacaoElemento.textContent =
-      saldo > 0 ? "Lucro" :
-      saldo < 0 ? "Prejuízo" : "Equilíbrio";
-  }
-
-  if (!historicoElemento) return;
+  situacaoElemento.textContent =
+    saldo > 0 ? "Lucro" :
+    saldo < 0 ? "Prejuízo" : "Equilíbrio";
 
   historicoElemento.innerHTML = "";
 
   if (movimentos.length === 0) {
-    historicoElemento.innerHTML = "<li>Ainda não existem movimentos.</li>";
+    historicoElemento.innerHTML =
+      "<li>Ainda não existem movimentos.</li>";
     return;
   }
 
-  movimentos.forEach(movimento => {
+  movimentos.forEach(m => {
     const item = document.createElement("li");
     const texto = document.createElement("span");
 
     texto.textContent =
-      `${movimento.descricao} — ${movimento.tipo} — ${formatarValor(movimento.valor)} `;
+      `${m.descricao} — ${m.tipo} — ${formatarValor(m.valor)} `;
 
     const editar = document.createElement("button");
     editar.textContent = "Editar";
-    editar.onclick = () => editarMovimento(movimento);
+    editar.type = "button";
+    editar.onclick = () => editarMovimento(m);
 
-    const apagar = document.createElement("button");
-    apagar.textContent = "Eliminar";
-    apagar.onclick = () => eliminarMovimento(movimento.id);
+    const eliminar = document.createElement("button");
+    eliminar.textContent = "Eliminar";
+    eliminar.type = "button";
+    eliminar.onclick = () => eliminarMovimento(m.id);
 
-    item.append(texto, editar, apagar);
+    item.append(texto, editar, eliminar);
     historicoElemento.appendChild(item);
   });
 }
 
+// Adicionar movimento
 async function adicionarMovimento() {
-  if (!utilizadorAtual) return;
-
   const descricao = descricaoInput.value.trim();
   const tipo = tipoInput.value;
   const valor = Number(valorInput.value);
@@ -159,26 +197,28 @@ async function adicionarMovimento() {
     });
 
   if (error) {
-    alert("Não foi possível adicionar o movimento.");
     console.error(error);
+    alert("Erro ao adicionar movimento.");
     return;
   }
 
   descricaoInput.value = "";
   valorInput.value = "";
+
   await carregarMovimentos();
 }
 
-async function editarMovimento(movimento) {
-  const novaDescricao = prompt("Nova descrição:", movimento.descricao);
-  if (novaDescricao === null) return;
+// Editar movimento
+async function editarMovimento(m) {
+  const descricao = prompt("Nova descrição:", m.descricao);
+  if (descricao === null) return;
 
-  const novoValorTexto = prompt("Novo valor:", movimento.valor);
-  if (novoValorTexto === null) return;
+  const valorTexto = prompt("Novo valor:", m.valor);
+  if (valorTexto === null) return;
 
-  const novoValor = Number(novoValorTexto);
+  const valor = Number(valorTexto);
 
-  if (!novaDescricao.trim() || !Number.isFinite(novoValor) || novoValor <= 0) {
+  if (!descricao.trim() || !Number.isFinite(valor) || valor <= 0) {
     alert("Dados inválidos.");
     return;
   }
@@ -186,23 +226,24 @@ async function editarMovimento(movimento) {
   const { error } = await supabaseClient
     .from("movimentos")
     .update({
-      descricao: novaDescricao.trim(),
-      valor: novoValor
+      descricao: descricao.trim(),
+      valor
     })
-    .eq("id", movimento.id)
+    .eq("id", m.id)
     .eq("user_id", utilizadorAtual.id);
 
   if (error) {
-    alert("Erro ao editar movimento.");
     console.error(error);
+    alert("Erro ao editar movimento.");
     return;
   }
 
   await carregarMovimentos();
 }
 
+// Eliminar movimento
 async function eliminarMovimento(id) {
-  if (!confirm("Tens a certeza que queres eliminar este movimento?")) return;
+  if (!confirm("Queres mesmo eliminar este movimento?")) return;
 
   const { error } = await supabaseClient
     .from("movimentos")
@@ -211,91 +252,47 @@ async function eliminarMovimento(id) {
     .eq("user_id", utilizadorAtual.id);
 
   if (error) {
-    alert("Erro ao eliminar movimento.");
     console.error(error);
+    alert("Erro ao eliminar movimento.");
     return;
   }
 
   await carregarMovimentos();
 }
 
-async function registar() {
-  const email = emailInput.value.trim();
-  const password = senhaInput.value;
+// Eventos dos botões
+document.getElementById("registar").addEventListener("click", registar);
+document.getElementById("entrar").addEventListener("click", entrar);
+document.getElementById("sair").addEventListener("click", sair);
+document.getElementById("adicionar").addEventListener("click", adicionarMovimento);
 
-  if (!email || !password) {
-    mostrarMensagem("Preenche o email e a palavra-passe.");
-    return;
-  }
-
-  const { error } = await supabaseClient.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: "https://privvcn.github.io/CN-Finance-Platform/"
-    }
-  });
-
-  mostrarMensagem(
-    error ? error.message : "Conta criada! Confirma o teu email."
-  );
-}
-
-async function entrar() {
-  const email = emailInput.value.trim();
-  const password = senhaInput.value;
-
-  if (!email || !password) {
-    mostrarMensagem("Preenche o email e a palavra-passe.");
-    return;
-  }
-
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    mostrarMensagem(error.message);
-    return;
-  }
-
-  mostrarMensagem("Sessão iniciada!");
-}
-
-async function sair() {
-  const { error } = await supabaseClient.auth.signOut();
-
-  if (error) {
-    mostrarMensagem(error.message);
-  }
-}
-
-botaoRegistar?.addEventListener("click", registar);
-botaoEntrar?.addEventListener("click", entrar);
-botaoSair?.addEventListener("click", sair);
-botaoAdicionar?.addEventListener("click", adicionarMovimento);
-
-supabaseClient.auth.onAuthStateChange(async (event, session) => {
+// Acompanhar alterações da sessão
+supabaseClient.auth.onAuthStateChange((event, session) => {
   utilizadorAtual = session?.user || null;
-  atualizarAcesso();
+  atualizarInterface();
 
   if (utilizadorAtual) {
-    await carregarMovimentos();
+    carregarMovimentos();
+  } else {
+    movimentos = [];
+    atualizarResumo();
   }
 });
 
+// Verificar sessão ao abrir o site
 async function iniciarAplicacao() {
+  atualizarInterface();
+
   const { data, error } = await supabaseClient.auth.getSession();
 
   if (error) {
-    mostrarMensagem("Erro ao verificar sessão.");
     console.error(error);
+    mensagem("Não foi possível verificar a sessão.");
     return;
   }
 
   utilizadorAtual = data.session?.user || null;
-  atualizarAcesso();
+  atualizarInterface();
 
   if (utilizadorAtual) {
     await carregarMovimentos();
