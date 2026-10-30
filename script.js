@@ -30,9 +30,25 @@ const mensagemAcesso = document.getElementById("mensagemAcesso");
 let movimentos = [];
 let utilizadorAtual = null;
 
-// Controlar a visibilidade do painel financeiro
+// Verificar elementos essenciais
+const elementosObrigatorios = [
+  descricaoInput, tipoInput, valorInput, botaoAdicionar,
+  resultadoTexto, situacaoTexto, totalReceitasTexto,
+  totalDespesasTexto, historicoLista, emailInput,
+  senhaInput, botaoRegistar, botaoEntrar,
+  botaoSair, mensagemAcesso
+];
+
+if (elementosObrigatorios.some(elemento => !elemento)) {
+  throw new Error("Faltam elementos HTML necessários para a CN Finance.");
+}
+
 const acessoSection = document.getElementById("acesso");
 const main = document.querySelector("main");
+
+if (!acessoSection || !main) {
+  throw new Error("Não foi encontrada a secção de acesso ou o elemento main.");
+}
 
 const elementosFinanceiros = Array.from(main.children)
   .filter(elemento => elemento !== acessoSection);
@@ -54,7 +70,6 @@ function atualizarAcesso() {
   }
 }
 
-// Formatar valores em meticais
 function formatarMT(valor) {
   return Number(valor).toLocaleString("pt-PT", {
     minimumFractionDigits: 2,
@@ -62,7 +77,7 @@ function formatarMT(valor) {
   }) + " MT";
 }
 
-// Carregar movimentos do utilizador
+// Carregar movimentos
 async function carregarMovimentos() {
   if (!utilizadorAtual) return;
 
@@ -74,7 +89,7 @@ async function carregarMovimentos() {
 
   if (error) {
     situacaoTexto.textContent =
-      "Erro ao carregar movimentos: " + error.message;
+      "Erro ao carregar: " + error.message;
     return;
   }
 
@@ -84,28 +99,14 @@ async function carregarMovimentos() {
 
 // Adicionar movimento
 botaoAdicionar.addEventListener("click", async function () {
-  if (!utilizadorAtual) {
-    mensagemAcesso.textContent = "Inicia sessão primeiro.";
-    return;
-  }
+  if (!utilizadorAtual) return;
 
   const descricao = descricaoInput.value.trim();
   const tipo = tipoInput.value;
   const valor = Number(valorInput.value);
 
-  if (descricao === "") {
-    situacaoTexto.textContent =
-      "Introduz a descrição do movimento.";
-    return;
-  }
-
-  if (
-    valorInput.value.trim() === "" ||
-    !Number.isFinite(valor) ||
-    valor <= 0
-  ) {
-    situacaoTexto.textContent =
-      "Introduz um valor maior que zero.";
+  if (!descricao || !Number.isFinite(valor) || valor <= 0) {
+    situacaoTexto.textContent = "Preenche os campos corretamente.";
     return;
   }
 
@@ -113,16 +114,15 @@ botaoAdicionar.addEventListener("click", async function () {
     .from("movimentos")
     .insert({
       user_id: utilizadorAtual.id,
-      descricao: descricao,
-      tipo: tipo,
-      valor: valor
+      descricao,
+      tipo,
+      valor
     })
     .select()
     .single();
 
   if (error) {
-    situacaoTexto.textContent =
-      "Erro ao guardar: " + error.message;
+    situacaoTexto.textContent = "Erro ao guardar: " + error.message;
     return;
   }
 
@@ -131,10 +131,9 @@ botaoAdicionar.addEventListener("click", async function () {
 
   descricaoInput.value = "";
   valorInput.value = "";
-  descricaoInput.focus();
 });
 
-// Atualizar resumo e histórico
+// Atualizar resumo
 function atualizarResumo() {
   let receitas = 0;
   let despesas = 0;
@@ -142,81 +141,54 @@ function atualizarResumo() {
   historicoLista.replaceChildren();
 
   if (movimentos.length === 0) {
-    const itemVazio = document.createElement("li");
-    itemVazio.textContent = "Ainda não existem movimentos.";
-    historicoLista.appendChild(itemVazio);
+    const item = document.createElement("li");
+    item.textContent = "Ainda não existem movimentos.";
+    historicoLista.appendChild(item);
   }
 
-  movimentos.forEach(function (movimento) {
-    const item = document.createElement("li");
+  movimentos.forEach(movimento => {
     const valor = Number(movimento.valor);
-    const sinal = movimento.tipo === "receita" ? "+" : "-";
-
+    const item = document.createElement("li");
     const texto = document.createElement("span");
 
     texto.textContent =
       movimento.descricao + " — " +
       movimento.tipo + ": " +
-      sinal + formatarMT(valor);
+      (movimento.tipo === "receita" ? "+" : "-") +
+      formatarMT(valor);
 
-    // Botão editar
     const botaoEditar = document.createElement("button");
     botaoEditar.textContent = "Editar";
     botaoEditar.type = "button";
-    botaoEditar.style.width = "auto";
 
     botaoEditar.addEventListener("click", async function () {
-      const novaDescricao = prompt(
-        "Nova descrição:",
-        movimento.descricao
-      );
+      const descricao = prompt("Nova descrição:", movimento.descricao);
+      if (descricao === null) return;
 
-      if (novaDescricao === null) return;
+      const tipo = prompt("Escreve receita ou despesa:", movimento.tipo);
+      if (tipo === null) return;
 
-      const descricaoLimpa = novaDescricao.trim();
+      const valorTexto = prompt("Novo valor em MT:", String(valor));
+      if (valorTexto === null) return;
 
-      if (descricaoLimpa === "") {
-        alert("A descrição não pode ficar vazia.");
-        return;
-      }
-
-      const novoTipo = prompt(
-        "Escreve receita ou despesa:",
-        movimento.tipo
-      );
-
-      if (novoTipo === null) return;
-
-      const tipoLimpo = novoTipo.trim().toLowerCase();
-
-      if (tipoLimpo !== "receita" && tipoLimpo !== "despesa") {
-        alert("Escreve receita ou despesa.");
-        return;
-      }
-
-      const novoValorTexto = prompt(
-        "Novo valor em MT:",
-        String(valor)
-      );
-
-      if (novoValorTexto === null) return;
-
-      const novoValor = Number(novoValorTexto);
+      const novoTipo = tipo.trim().toLowerCase();
+      const novoValor = Number(valorTexto);
 
       if (
-        novoValorTexto.trim() === "" ||
+        !descricao.trim() ||
+        !["receita", "despesa"].includes(novoTipo) ||
         !Number.isFinite(novoValor) ||
         novoValor <= 0
       ) {
-        alert("Introduz um valor maior que zero.");
+        alert("Verifica os dados introduzidos.");
         return;
       }
 
       const { data, error } = await supabaseClient
         .from("movimentos")
         .update({
-          descricao: descricaoLimpa,
-          tipo: tipoLimpo,
+          descricao: descricao.trim(),
+          tipo: novoTipo,
           valor: novoValor
         })
         .eq("id", movimento.id)
@@ -229,29 +201,19 @@ function atualizarResumo() {
         return;
       }
 
-      const indice = movimentos.findIndex(
-        item => item.id === movimento.id
+      movimentos = movimentos.map(item =>
+        item.id === movimento.id ? data : item
       );
-
-      if (indice !== -1) {
-        movimentos[indice] = data;
-      }
 
       atualizarResumo();
     });
 
-    // Botão eliminar
     const botaoEliminar = document.createElement("button");
     botaoEliminar.textContent = "Eliminar";
     botaoEliminar.type = "button";
-    botaoEliminar.style.width = "auto";
 
     botaoEliminar.addEventListener("click", async function () {
-      const confirmar = confirm(
-        "Tens a certeza de que queres eliminar este movimento?"
-      );
-
-      if (!confirmar) return;
+      if (!confirm("Queres eliminar este movimento?")) return;
 
       const { error } = await supabaseClient
         .from("movimentos")
@@ -264,10 +226,7 @@ function atualizarResumo() {
         return;
       }
 
-      movimentos = movimentos.filter(
-        item => item.id !== movimento.id
-      );
-
+      movimentos = movimentos.filter(item => item.id !== movimento.id);
       atualizarResumo();
     });
 
@@ -307,26 +266,32 @@ botaoRegistar.addEventListener("click", async function () {
   const senha = senhaInput.value;
 
   if (!email || !senha) {
-    mensagemAcesso.textContent =
-      "Preenche o email e a palavra-passe.";
+    mensagemAcesso.textContent = "Preenche o email e a palavra-passe.";
     return;
   }
 
-  const { error } = await supabaseClient.auth.signUp({
-    email: email,
-    password: senha,
-    options: {
-      emailRedirectTo: "https://privvcn.github.io/CN-Finance-Platform/"
-    }
-  });
+  botaoRegistar.disabled = true;
+  mensagemAcesso.textContent = "A criar a tua conta...";
 
-  if (error) {
-    mensagemAcesso.textContent = error.message;
-    return;
+  try {
+    const { data, error } = await supabaseClient.auth.signUp({
+      email,
+      password: senha,
+      options: {
+        emailRedirectTo: "https://privvcn.github.io/CN-Finance-Platform/"
+      }
+    });
+
+    if (error) throw error;
+
+    mensagemAcesso.textContent = data.session
+      ? "Conta criada e sessão iniciada!"
+      : "Conta criada! Verifica o teu email para confirmar.";
+  } catch (erro) {
+    mensagemAcesso.textContent = "Erro no registo: " + erro.message;
+  } finally {
+    botaoRegistar.disabled = false;
   }
-
-  mensagemAcesso.textContent =
-    "Conta criada! Confirma o teu email para continuar.";
 });
 
 // Iniciar sessão
@@ -335,19 +300,24 @@ botaoEntrar.addEventListener("click", async function () {
   const senha = senhaInput.value;
 
   if (!email || !senha) {
-    mensagemAcesso.textContent =
-      "Preenche o email e a palavra-passe.";
+    mensagemAcesso.textContent = "Preenche o email e a palavra-passe.";
     return;
   }
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email: email,
-    password: senha
-  });
+  botaoEntrar.disabled = true;
+  mensagemAcesso.textContent = "A iniciar sessão...";
 
-  if (error) {
-    mensagemAcesso.textContent = error.message;
-    return;
+  try {
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password: senha
+    });
+
+    if (error) throw error;
+  } catch (erro) {
+    mensagemAcesso.textContent = "Erro ao entrar: " + erro.message;
+  } finally {
+    botaoEntrar.disabled = false;
   }
 });
 
@@ -356,17 +326,16 @@ botaoSair.addEventListener("click", async function () {
   const { error } = await supabaseClient.auth.signOut();
 
   if (error) {
-    mensagemAcesso.textContent = error.message;
+    mensagemAcesso.textContent = "Erro ao sair: " + error.message;
     return;
   }
 
   mensagemAcesso.textContent = "Sessão terminada.";
 });
 
-// Acompanhar o estado da sessão
+// Acompanhar sessão
 supabaseClient.auth.onAuthStateChange((evento, session) => {
   utilizadorAtual = session ? session.user : null;
-
   atualizarAcesso();
 
   if (utilizadorAtual) {
@@ -375,28 +344,26 @@ supabaseClient.auth.onAuthStateChange((evento, session) => {
 
     carregarMovimentos();
   } else {
-    mensagemAcesso.textContent =
-      "Cria uma conta ou inicia sessão.";
+    mensagemAcesso.textContent = "Cria uma conta ou inicia sessão.";
   }
 });
 
-// Verificar sessão existente ao abrir o site
+// Verificar sessão existente
 async function iniciarAplicacao() {
-  const { data, error } = await supabaseClient.auth.getSession();
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
 
-  if (error) {
-    mensagemAcesso.textContent = error.message;
-    return;
-  }
+    if (error) throw error;
 
-  utilizadorAtual = data.session
-    ? data.session.user
-    : null;
+    utilizadorAtual = data.session ? data.session.user : null;
+    atualizarAcesso();
 
-  atualizarAcesso();
-
-  if (utilizadorAtual) {
-    carregarMovimentos();
+    if (utilizadorAtual) {
+      await carregarMovimentos();
+    }
+  } catch (erro) {
+    mensagemAcesso.textContent =
+      "Erro ao iniciar CN Finance: " + erro.message;
   }
 }
 
