@@ -1,421 +1,267 @@
 
+/* ==============================
+   CN FINANCE — DESIGN PRINCIPAL
+================================ */
+
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 body {
-  margin: 0;
-  padding: 20px;
-  background: #eef1f6;
-  font-family: Arial, sans-serif;
-  color: #142b4a;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #081426;
+  color: #f5f5f5;
+  min-height: 100vh;
+  padding: 25px 15px;
 }
 
 .app {
-  max-width: 650px;
-  margin: 20px auto;
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 25px #142b4a20;
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
 }
 
+/* CABEÇALHO */
+
 header {
-  background: #142b4a;
-  color: white;
   text-align: center;
-  padding: 28px 15px;
-  border-bottom: 5px solid #d4af37;
+  padding: 35px 20px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #c5a34a;
 }
 
 header h1 {
-  margin: 0 0 8px;
-  font-size: 30px;
+  color: #d6b45c;
+  font-size: 38px;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
 }
 
 header p {
-  margin: 0;
-  color: #e0c66d;
+  color: #b9c3d0;
+  font-size: 14px;
+  letter-spacing: 2px;
 }
+
+/* CONTEÚDO */
 
 main {
-  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
-main > h2 {
-  margin-top: 0;
+section.resultado {
+  background: #11243d;
+  border: 1px solid #243b58;
+  border-radius: 14px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
+
+/* TÍTULOS */
+
+h2 {
+  color: #d6b45c;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+section p {
+  color: #c6d0dc;
+  margin-bottom: 12px;
+}
+
+/* CAMPOS */
 
 label {
   display: block;
-  margin-top: 16px;
-  margin-bottom: 7px;
-  font-weight: bold;
+  color: #dce4ee;
+  margin: 15px 0 8px;
+  font-size: 14px;
 }
 
-input, select {
+input,
+select {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #cbd2dc;
-  border-radius: 7px;
-  font-size: 16px;
+  padding: 13px;
+  border: 1px solid #344b68;
+  border-radius: 8px;
+  background: #09182b;
+  color: #ffffff;
+  font-size: 15px;
+  outline: none;
+  margin-bottom: 10px;
 }
+
+input:focus,
+select:focus {
+  border-color: #d6b45c;
+  box-shadow: 0 0 0 2px rgba(214, 180, 92, 0.15);
+}
+
+input::placeholder {
+  color: #8291a5;
+}
+
+/* BOTÕES */
 
 button {
-  width: 100%;
-  margin-top: 22px;
-  padding: 13px;
-  background: #142b4a;
-  color: white;
-  border: 0;
-  border-radius: 7px;
-  font-size: 16px;
+  background: #c5a34a;
+  color: #081426;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 18px;
   font-weight: bold;
+  font-size: 14px;
   cursor: pointer;
+  margin: 8px 5px 0 0;
+  transition: 0.2s ease;
 }
 
 button:hover {
-  background: #203f68;
+  background: #e2c675;
+  transform: translateY(-2px);
 }
 
-.resultado {
-  margin-top: 25px;
-  padding: 18px;
-  border: 1px solid #e0e4eb;
-  border-radius: 10px;
-  overflow-wrap: anywhere;
+button:active {
+  transform: scale(0.98);
 }
 
-.resultado > p:first-child {
-  margin-bottom: 5px;
+/* ÁREA DE ACESSO */
+
+#acesso {
+  max-width: 500px;
+  width: 100%;
+  margin: 30px auto;
 }
+
+#acesso button {
+  width: 100%;
+  margin: 8px 0;
+}
+
+#mensagemAcesso {
+  margin-top: 18px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* PAINEL FINANCEIRO */
+
+#painelFinanceiro {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+#painelFinanceiro[hidden] {
+  display: none !important;
+}
+
+/* SALDO */
 
 #resultado {
-  font-size: 30px;
-  color: #142b4a;
+  font-size: 34px;
+  font-weight: bold;
+  color: #d6b45c;
+  margin: 12px 0;
 }
+
+#situacao {
+  font-weight: bold;
+}
+
+/* TOTAIS */
 
 .detalhes {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
-  margin-top: 15px;
+  padding: 15px 0;
+  border-top: 1px solid #344b68;
+}
+
+.detalhes span {
+  color: #b9c3d0;
 }
 
 .detalhes strong {
-  text-align: right;
+  color: #ffffff;
 }
 
-li {
+/* HISTÓRICO */
+
+#historico {
+  list-style: none;
+}
+
+#historico li {
+  background: #09182b;
+  border: 1px solid #344b68;
+  border-radius: 8px;
+  padding: 15px;
   margin-bottom: 12px;
+  color: #e3eaf2;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
+#historico button {
+  font-size: 12px;
+  padding: 9px 12px;
+}
+
+/* RODAPÉ */
+
 footer {
-  padding: 16px;
   text-align: center;
-  background: #f5f6f8;
-  color: #64748b;
-  font-size: 13px;
+  color: #8291a5;
+  font-size: 12px;
+  padding: 30px 10px;
+  margin-top: 20px;
+  border-top: 1px solid #243b58;
 }
 
-/* CN Finance — melhoria visual */
+/* TELEMÓVEIS */
 
-body {
-  background: #eef2f7;
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: #172b46;
-}
+@media (max-width: 600px) {
+  body {
+    padding: 12px;
+  }
 
-.app {
-  max-width: 900px;
-  margin: 30px auto;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 12px 35px rgba(20, 43, 74, 0.12);
-}
+  header {
+    padding: 25px 10px;
+  }
 
-header {
-  padding: 32px 24px;
-  background: linear-gradient(135deg, #10243e, #1e416b);
-  border-bottom: 4px solid #d7ad45;
-}
+  header h1 {
+    font-size: 29px;
+  }
 
-header h1 {
-  font-size: 32px;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
+  section.resultado {
+    padding: 18px;
+  }
 
-header p {
-  color: #f0d58a;
-  letter-spacing: 1px;
-}
+  h2 {
+    font-size: 19px;
+  }
 
-main {
-  padding: 28px;
-  background: #ffffff;
-}
+  #resultado {
+    font-size: 28px;
+  }
 
-main h2 {
-  color: #142b4a;
-}
+  button {
+    padding: 12px;
+  }
 
-input,
-select {
-  border: 1px solid #d5deea;
-  border-radius: 9px;
-  padding: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-  border-color: #c49a32;
-  box-shadow: 0 0 0 3px rgba(196, 154, 50, 0.15);
-}
-
-.resultado {
-  border: 1px solid #e0e7f0;
-  border-radius: 14px;
-  padding: 22px;
-  margin-top: 24px;
-  box-shadow: 0 4px 14px rgba(20, 43, 74, 0.05);
-}
-
-.resultado h2 {
-  margin-top: 0;
-}
-
-footer {
-  background: #10243e;
-  color: #dce5f1;
-  padding: 18px;
-}
-
-/* CN Finance — melhoria visual */
-
-body {
-  background: #eef2f7;
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: #172b46;
-}
-
-.app {
-  max-width: 900px;
-  margin: 30px auto;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 12px 35px rgba(20, 43, 74, 0.12);
-}
-
-header {
-  padding: 32px 24px;
-  background: linear-gradient(135deg, #10243e, #1e416b);
-  border-bottom: 4px solid #d7ad45;
-}
-
-header h1 {
-  font-size: 32px;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-
-header p {
-  color: #f0d58a;
-  letter-spacing: 1px;
-}
-
-main {
-  padding: 28px;
-  background: #ffffff;
-}
-
-main h2 {
-  color: #142b4a;
-}
-
-input,
-select {
-  border: 1px solid #d5deea;
-  border-radius: 9px;
-  padding: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-  border-color: #c49a32;
-  box-shadow: 0 0 0 3px rgba(196, 154, 50, 0.15);
-}
-
-.resultado {
-  border: 1px solid #e0e7f0;
-  border-radius: 14px;
-  padding: 22px;
-  margin-top: 24px;
-  box-shadow: 0 4px 14px rgba(20, 43, 74, 0.05);
-}
-
-.resultado h2 {
-  margin-top: 0;
-}
-
-footer {
-  background: #10243e;
-  color: #dce5f1;
-  padding: 18px;
-}
-
-/* CN Finance — melhoria visual */
-
-body {
-  background: #eef2f7;
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: #172b46;
-}
-
-.app {
-  max-width: 900px;
-  margin: 30px auto;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 12px 35px rgba(20, 43, 74, 0.12);
-}
-
-header {
-  padding: 32px 24px;
-  background: linear-gradient(135deg, #10243e, #1e416b);
-  border-bottom: 4px solid #d7ad45;
-}
-
-header h1 {
-  font-size: 32px;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-
-header p {
-  color: #f0d58a;
-  letter-spacing: 1px;
-}
-
-main {
-  padding: 28px;
-  background: #ffffff;
-}
-
-main h2 {
-  color: #142b4a;
-}
-
-input,
-select {
-  border: 1px solid #d5deea;
-  border-radius: 9px;
-  padding: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-  border-color: #c49a32;
-  box-shadow: 0 0 0 3px rgba(196, 154, 50, 0.15);
-}
-
-.resultado {
-  border: 1px solid #e0e7f0;
-  border-radius: 14px;
-  padding: 22px;
-  margin-top: 24px;
-  box-shadow: 0 4px 14px rgba(20, 43, 74, 0.05);
-}
-
-.resultado h2 {
-  margin-top: 0;
-}
-
-footer {
-  background: #10243e;
-  color: #dce5f1;
-  padding: 18px;
-}
-
-
-/* CN Finance — melhoria visual */
-
-body {
-  background: #eef2f7;
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: #172b46;
-}
-
-.app {
-  max-width: 900px;
-  margin: 30px auto;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 12px 35px rgba(20, 43, 74, 0.12);
-}
-
-header {
-  padding: 32px 24px;
-  background: linear-gradient(135deg, #10243e, #1e416b);
-  border-bottom: 4px solid #d7ad45;
-}
-
-header h1 {
-  font-size: 32px;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-
-header p {
-  color: #f0d58a;
-  letter-spacing: 1px;
-}
-
-main {
-  padding: 28px;
-  background: #ffffff;
-}
-
-main h2 {
-  color: #142b4a;
-}
-
-input,
-select {
-  border: 1px solid #d5deea;
-  border-radius: 9px;
-  padding: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-  border-color: #c49a32;
-  box-shadow: 0 0 0 3px rgba(196, 154, 50, 0.15);
-}
-
-.resultado {
-  border: 1px solid #e0e7f0;
-  border-radius: 14px;
-  padding: 22px;
-  margin-top: 24px;
-  box-shadow: 0 4px 14px rgba(20, 43, 74, 0.05);
-}
-
-.resultado h2 {
-  margin-top: 0;
-}
-
-footer {
-  background: #10243e;
-  color: #dce5f1;
-  padding: 18px;
+  .detalhes {
+    font-size: 13px;
+  }
 }
