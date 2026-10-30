@@ -1,0 +1,421 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: #eef1f6;
+  font-family: Arial, sans-serif;
+  color: #142b4a;
+}
+
+.app {
+  max-width: 650px;
+  margin: 20px auto;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px #142b4a20;
+}
+
+header {
+  background: #142b4a;
+  color: white;
+  text-align: center;
+  padding: 28px 15px;
+  border-bottom: 5px solid #d4af37;
+}
+
+header h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+header p {
+  margin: 0;
+  color: #e0c66d;
+}
+
+main {
+  padding: 24px;
+}
+
+main > h2 {
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 7px;
+  font-weight: bold;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd2dc;
+  border-radius: 7px;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  margin-top: 22px;
+  padding: 13px;
+  background: #142b4a;
+  color: white;
+  border: 0;
+  border-radius: 7px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #203f68;
+}
+
+.resultado {
+  margin-top: 25px;
+  padding: 18px;
+  border: 1px solid #e0e4eb;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+
+.resultado > p:first-child {
+  margin-bottom: 5px;
+}
+
+#resultado {
+  font-size: 30px;
+  color: #142b4a;
+}
+
+.detalhes {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.detalhes strong {
+  text-align: right;
+}
+
+li {
+  margin-bottom: 12px;
+  overflow-wrap: anywhere;
+}
+
+footer {
+  padding: 16px;
+  text-align: center;
+  background: #f5f6f8;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* CN Finance — melhoria visual */
+
+body {
+  background: #eef2f7;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #172b46;
+}
+
+.app {
+  max-width: 900px;
+  margin: 30px auto;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(20, 43, 74, 0.12);
+}
+
+header {
+  padding: 32px 24px;
+  background: linear-gradient(135deg, #10243e, #1e416b);
+  border-bottom: 4px solid #d7ad45;
+}
+
+header h1 {
+  font-size: 32px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: #f0d58a;
+  letter-spacing: 1px;
+}
+
+main {
+  padding: 28px;
+  background: #ffffff;
+}
+
+main h2 {
+  color: #142b4a;
+}
+
+input,
+select {
+  border: 1px solid #d5deea;
+  border-radius: 9px;
+  padding: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #c49a32;
+  box-shadow: 0 0 0 3px rgba(196, 154, 50, 0.15);
+}
+
+.resultado {
+  border: 1px solid #e0e7f0;
+  border-radius: 14px;
+  padding: 22px;
+  margin-top: 24px;
+  box-shadow: 0 4px 14px rgba(20, 43, 74, 0.05);
+}
+
+.resultado h2 {
+  margin-top: 0;
+}
+
+footer {
+  background: #10243e;
+  color: #dce5f1;
+  padding: 18px;
+}
+
+/* CN Finance — melhoria visual */
+
+body {
+  background: #eef2f7;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #172b46;
+}
+
+.app {
+  max-width: 900px;
+  margin: 30px auto;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(20, 43, 74, 0.12);
+}
+
+header {
+  padding: 32px 24px;
+  background: linear-gradient(135deg, #10243e, #1e416b);
+  border-bottom: 4px solid #d7ad45;
+}
+
+header h1 {
+  font-size: 32px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: #f0d58a;
+  letter-spacing: 1px;
+}
+
+main {
+  padding: 28px;
+  background: #ffffff;
+}
+
+main h2 {
+  color: #142b4a;
+}
+
+input,
+select {
+  border: 1px solid #d5deea;
+  border-radius: 9px;
+  padding: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #c49a32;
+  box-shadow: 0 0 0 3px rgba(196, 154, 50, 0.15);
+}
+
+.resultado {
+  border: 1px solid #e0e7f0;
+  border-radius: 14px;
+  padding: 22px;
+  margin-top: 24px;
+  box-shadow: 0 4px 14px rgba(20, 43, 74, 0.05);
+}
+
+.resultado h2 {
+  margin-top: 0;
+}
+
+footer {
+  background: #10243e;
+  color: #dce5f1;
+  padding: 18px;
+}
+
+/* CN Finance — melhoria visual */
+
+body {
+  background: #eef2f7;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #172b46;
+}
+
+.app {
+  max-width: 900px;
+  margin: 30px auto;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(20, 43, 74, 0.12);
+}
+
+header {
+  padding: 32px 24px;
+  background: linear-gradient(135deg, #10243e, #1e416b);
+  border-bottom: 4px solid #d7ad45;
+}
+
+header h1 {
+  font-size: 32px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: #f0d58a;
+  letter-spacing: 1px;
+}
+
+main {
+  padding: 28px;
+  background: #ffffff;
+}
+
+main h2 {
+  color: #142b4a;
+}
+
+input,
+select {
+  border: 1px solid #d5deea;
+  border-radius: 9px;
+  padding: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #c49a32;
+  box-shadow: 0 0 0 3px rgba(196, 154, 50, 0.15);
+}
+
+.resultado {
+  border: 1px solid #e0e7f0;
+  border-radius: 14px;
+  padding: 22px;
+  margin-top: 24px;
+  box-shadow: 0 4px 14px rgba(20, 43, 74, 0.05);
+}
+
+.resultado h2 {
+  margin-top: 0;
+}
+
+footer {
+  background: #10243e;
+  color: #dce5f1;
+  padding: 18px;
+}
+
+
+/* CN Finance — melhoria visual */
+
+body {
+  background: #eef2f7;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #172b46;
+}
+
+.app {
+  max-width: 900px;
+  margin: 30px auto;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(20, 43, 74, 0.12);
+}
+
+header {
+  padding: 32px 24px;
+  background: linear-gradient(135deg, #10243e, #1e416b);
+  border-bottom: 4px solid #d7ad45;
+}
+
+header h1 {
+  font-size: 32px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: #f0d58a;
+  letter-spacing: 1px;
+}
+
+main {
+  padding: 28px;
+  background: #ffffff;
+}
+
+main h2 {
+  color: #142b4a;
+}
+
+input,
+select {
+  border: 1px solid #d5deea;
+  border-radius: 9px;
+  padding: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #c49a32;
+  box-shadow: 0 0 0 3px rgba(196, 154, 50, 0.15);
+}
+
+.resultado {
+  border: 1px solid #e0e7f0;
+  border-radius: 14px;
+  padding: 22px;
+  margin-top: 24px;
+  box-shadow: 0 4px 14px rgba(20, 43, 74, 0.05);
+}
+
+.resultado h2 {
+  margin-top: 0;
+}
+
+footer {
+  background: #10243e;
+  color: #dce5f1;
+  padding: 18px;
+}
