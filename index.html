@@ -17,7 +17,6 @@
 
     <main>
 
-      <!-- ACESSO -->
       <section class="resultado" id="acesso">
         <h2>Acesso à CN Finance</h2>
 
@@ -33,11 +32,10 @@
         <p id="mensagemAcesso">Cria uma conta ou inicia sessão.</p>
       </section>
 
-      <!-- PAINEL FINANCEIRO -->
       <div id="painelFinanceiro" hidden>
 
-        <!-- DASHBOARD -->
         <section class="dashboard">
+
           <div class="dashboard-heading">
             <div>
               <h2>Dashboard</h2>
@@ -47,7 +45,6 @@
           </div>
 
           <div class="dashboard-cards">
-
             <div class="card-financeiro">
               <span>Saldo total</span>
               <h3 id="dashSaldo">0,00 MT</h3>
@@ -62,19 +59,22 @@
               <span>Total de despesas</span>
               <h3 id="dashDespesas">0,00 MT</h3>
             </div>
-
           </div>
 
           <div class="resultado">
             <h3>Receitas vs. Despesas</h3>
-            <p class="subtitulo">Comparação do mês actual</p>
+            <p class="subtitulo">Comparação de todos os movimentos</p>
             <canvas id="graficoFinanceiro"></canvas>
             <p id="mensagemGrafico" class="subtitulo"></p>
           </div>
 
           <div class="resultado">
             <h3>Resumo mensal</h3>
-            <p id="mesAtual">Mês actual</p>
+
+            <label for="mesSelecionado">Seleccionar mês:</label>
+            <input type="month" id="mesSelecionado">
+
+            <p id="mesAtual">Mês seleccionado</p>
 
             <div class="detalhes">
               <span>Receitas do mês</span>
@@ -91,9 +91,9 @@
               <strong id="mesResultado">0,00 MT</strong>
             </div>
           </div>
+
         </section>
 
-        <!-- ADICIONAR MOVIMENTO -->
         <section class="resultado">
           <h2>Gestão Financeira</h2>
 
@@ -112,7 +112,6 @@
           <button type="button" id="adicionar">Adicionar movimento</button>
         </section>
 
-        <!-- RESUMO FINANCEIRO -->
         <section class="resultado">
           <h2>Resumo financeiro</h2>
           <p>Saldo financeiro</p>
@@ -130,7 +129,6 @@
           </div>
         </section>
 
-        <!-- HISTÓRICO -->
         <section class="resultado">
           <h2>Histórico de movimentos</h2>
           <ul id="historico">
