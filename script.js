@@ -40,6 +40,7 @@ const mesAtualElemento = document.getElementById("mesAtual");
 const mesReceitasElemento = document.getElementById("mesReceitas");
 const mesDespesasElemento = document.getElementById("mesDespesas");
 const mesResultadoElemento = document.getElementById("mesResultado");
+const mesSelecionado = document.getElementById("mesSelecionado");
 
 const grafico = document.getElementById("graficoFinanceiro");
 const mensagemGrafico = document.getElementById("mensagemGrafico");
@@ -57,7 +58,6 @@ function mensagem(texto) {
 
 function atualizarInterface() {
   const autenticado = Boolean(utilizadorAtual);
-
   acesso.hidden = autenticado;
   painel.hidden = !autenticado;
 }
@@ -112,11 +112,7 @@ async function registar() {
     }
   });
 
-  if (error) {
-    mensagem(error.message);
-  } else {
-    mensagem("Conta criada! Confirma o teu email.");
-  }
+  mensagem(error ? error.message : "Conta criada! Confirma o teu email.");
 }
 
 // =====================================
@@ -137,9 +133,7 @@ async function entrar() {
     password
   });
 
-  if (error) {
-    mensagem(error.message);
-  }
+  if (error) mensagem(error.message);
 }
 
 // =====================================
@@ -148,10 +142,7 @@ async function entrar() {
 
 async function sair() {
   const { error } = await supabaseClient.auth.signOut();
-
-  if (error) {
-    mensagem(error.message);
-  }
+  if (error) mensagem(error.message);
 }
 
 // =====================================
@@ -178,7 +169,7 @@ async function carregarMovimentos() {
 }
 
 // =====================================
-// ATUALIZAR RESUMO FINANCEIRO
+// RESUMO FINANCEIRO GERAL
 // =====================================
 
 function atualizarResumo() {
@@ -194,8 +185,7 @@ function atualizarResumo() {
 
   situacaoElemento.textContent =
     totais.saldo > 0 ? "Lucro" :
-    totais.saldo < 0 ? "Prejuízo" :
-    "Equilíbrio";
+    totais.saldo < 0 ? "Prejuízo" : "Equilíbrio";
 
   atualizarResumoMensal();
   desenharGrafico(totais.receitas, totais.despesas);
@@ -203,23 +193,20 @@ function atualizarResumo() {
 }
 
 // =====================================
-// RESUMO DO MÊS ATUAL
+// RESUMO DO MÊS SELECIONADO
 // =====================================
 
 function atualizarResumoMensal() {
-  const agora = new Date();
+  if (!mesSelecionado) return;
 
-  const inicioMes = new Date(
-    agora.getFullYear(),
-    agora.getMonth(),
-    1
-  );
+  const mes = mesSelecionado.value;
 
-  const proximoMes = new Date(
-    agora.getFullYear(),
-    agora.getMonth() + 1,
-    1
-  );
+  if (!mes) return;
+
+  const [ano, numeroMes] = mes.split("-").map(Number);
+
+  const inicioMes = new Date(ano, numeroMes - 1, 1);
+  const proximoMes = new Date(ano, numeroMes, 1);
 
   const movimentosDoMes = movimentos.filter(m => {
     const data = new Date(m.created_at);
@@ -228,10 +215,11 @@ function atualizarResumoMensal() {
 
   const totais = obterTotais(movimentosDoMes);
 
-  mesAtualElemento.textContent = agora.toLocaleDateString("pt-MZ", {
-    month: "long",
-    year: "numeric"
-  });
+  mesAtualElemento.textContent =
+    inicioMes.toLocaleDateString("pt-MZ", {
+      month: "long",
+      year: "numeric"
+    });
 
   mesReceitasElemento.textContent = formatarValor(totais.receitas);
   mesDespesasElemento.textContent = formatarValor(totais.despesas);
@@ -243,8 +231,9 @@ function atualizarResumoMensal() {
 // =====================================
 
 function desenharGrafico(receitas, despesas) {
-  const contexto = grafico.getContext("2d");
+  if (!grafico) return;
 
+  const contexto = grafico.getContext("2d");
   const largura = grafico.clientWidth || 500;
   const altura = 250;
   const escala = window.devicePixelRatio || 1;
@@ -270,18 +259,8 @@ function desenharGrafico(receitas, despesas) {
   const larguraBarra = Math.min(75, largura / 5);
 
   const itens = [
-    {
-      nome: "Receitas",
-      valor: receitas,
-      cor: "#d7b46a",
-      x: largura * 0.30
-    },
-    {
-      nome: "Despesas",
-      valor: despesas,
-      cor: "#263f65",
-      x: largura * 0.70
-    }
+    { nome: "Receitas", valor: receitas, cor: "#d7b46a", x: largura * 0.30 },
+    { nome: "Despesas", valor: despesas, cor: "#263f65", x: largura * 0.70 }
   ];
 
   contexto.font = "13px Arial";
@@ -297,9 +276,7 @@ function desenharGrafico(receitas, despesas) {
 
     contexto.fillStyle = "#142541";
     contexto.fillText(
-      item.valor.toLocaleString("pt-MZ", {
-        maximumFractionDigits: 0
-      }),
+      item.valor.toLocaleString("pt-MZ", { maximumFractionDigits: 0 }),
       item.x,
       Math.max(y - 10, 15)
     );
@@ -316,8 +293,7 @@ function atualizarHistorico() {
   historicoElemento.innerHTML = "";
 
   if (movimentos.length === 0) {
-    historicoElemento.innerHTML =
-      "<li>Ainda não existem movimentos.</li>";
+    historicoElemento.innerHTML = "<li>Ainda não existem movimentos.</li>";
     return;
   }
 
@@ -325,8 +301,7 @@ function atualizarHistorico() {
     const item = document.createElement("li");
     const texto = document.createElement("span");
 
-    const tipoTexto =
-      m.tipo === "receita" ? "Receita" : "Despesa";
+    const tipoTexto = m.tipo === "receita" ? "Receita" : "Despesa";
 
     texto.textContent =
       `${m.descricao} — ${tipoTexto} — ${formatarValor(m.valor)}`;
@@ -392,11 +367,9 @@ async function adicionarMovimento() {
 
 async function editarMovimento(m) {
   const descricao = prompt("Nova descrição:", m.descricao);
-
   if (descricao === null) return;
 
   const valorTexto = prompt("Novo valor:", m.valor);
-
   if (valorTexto === null) return;
 
   const valor = Number(valorTexto);
@@ -408,10 +381,7 @@ async function editarMovimento(m) {
 
   const { error } = await supabaseClient
     .from("movimentos")
-    .update({
-      descricao: descricao.trim(),
-      valor
-    })
+    .update({ descricao: descricao.trim(), valor })
     .eq("id", m.id)
     .eq("user_id", utilizadorAtual.id);
 
@@ -447,20 +417,22 @@ async function eliminarMovimento(id) {
 }
 
 // =====================================
-// EVENTOS DOS BOTÕES
+// EVENTOS
 // =====================================
 
-document.getElementById("registar")
-  .addEventListener("click", registar);
+document.getElementById("registar").addEventListener("click", registar);
+document.getElementById("entrar").addEventListener("click", entrar);
+document.getElementById("sair").addEventListener("click", sair);
+document.getElementById("adicionar").addEventListener("click", adicionarMovimento);
 
-document.getElementById("entrar")
-  .addEventListener("click", entrar);
+if (mesSelecionado) {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
 
-document.getElementById("sair")
-  .addEventListener("click", sair);
-
-document.getElementById("adicionar")
-  .addEventListener("click", adicionarMovimento);
+  mesSelecionado.value = `${ano}-${mes}`;
+  mesSelecionado.addEventListener("change", atualizarResumoMensal);
+}
 
 // =====================================
 // ACOMPANHAR SESSÃO
@@ -479,7 +451,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 });
 
 // =====================================
-// VERIFICAR SESSÃO AO ABRIR O SITE
+// VERIFICAR SESSÃO
 // =====================================
 
 async function iniciarAplicacao() {
@@ -494,15 +466,13 @@ async function iniciarAplicacao() {
   utilizadorAtual = data.session?.user || null;
   atualizarInterface();
 
-  if (utilizadorAtual) {
-    await carregarMovimentos();
-  }
+  if (utilizadorAtual) await carregarMovimentos();
 }
 
 iniciarAplicacao();
 
 // =====================================
-// ACTUALIZAR GRÁFICO AO REDIMENSIONAR
+// REDIMENSIONAR GRÁFICO
 // =====================================
 
 window.addEventListener("resize", () => {
