@@ -1,8 +1,4 @@
 
-/* ==============================
-   CN FINANCE — DESIGN PRINCIPAL
-================================ */
-
 * {
   margin: 0;
   padding: 0;
@@ -14,42 +10,37 @@
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #081426;
-  color: #f5f5f5;
-  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #f3f5f9;
+  color: #17243b;
   padding: 25px 15px;
 }
 
 .app {
   width: 100%;
-  max-width: 850px;
-  margin: 0 auto;
+  max-width: 1050px;
+  margin: auto;
 }
 
-/* CABEÇALHO */
-
 header {
+  background: #101e36;
+  color: white;
   text-align: center;
   padding: 35px 20px;
+  border-radius: 14px;
   margin-bottom: 25px;
-  border-bottom: 1px solid #c5a34a;
 }
 
 header h1 {
-  color: #d6b45c;
-  font-size: 38px;
-  letter-spacing: 3px;
-  margin-bottom: 10px;
+  font-size: 32px;
+  color: #d7b46a;
+  letter-spacing: 1px;
 }
 
 header p {
-  color: #b9c3d0;
-  font-size: 14px;
-  letter-spacing: 2px;
+  margin-top: 9px;
+  color: #e1e5ed;
 }
-
-/* CONTEÚDO */
 
 main {
   display: flex;
@@ -57,33 +48,28 @@ main {
   gap: 22px;
 }
 
-section.resultado {
-  background: #11243d;
-  border: 1px solid #243b58;
-  border-radius: 14px;
+.resultado {
+  background: white;
   padding: 25px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-}
-
-/* TÍTULOS */
-
-h2 {
-  color: #d6b45c;
+  border-radius: 13px;
+  box-shadow: 0 3px 14px rgba(16, 30, 54, 0.07);
   margin-bottom: 20px;
-  font-size: 22px;
 }
 
-section p {
-  color: #c6d0dc;
+.resultado h2 {
+  color: #142541;
+  margin-bottom: 18px;
+}
+
+.resultado h3 {
+  color: #142541;
   margin-bottom: 12px;
 }
 
-/* CAMPOS */
-
 label {
   display: block;
-  color: #dce4ee;
-  margin: 15px 0 8px;
+  margin: 14px 0 7px;
+  font-weight: bold;
   font-size: 14px;
 }
 
@@ -91,181 +77,210 @@ input,
 select {
   width: 100%;
   padding: 13px;
-  border: 1px solid #344b68;
+  border: 1px solid #d8dee8;
   border-radius: 8px;
-  background: #09182b;
-  color: #ffffff;
   font-size: 15px;
-  outline: none;
-  margin-bottom: 10px;
+  background: #fff;
+  color: #17243b;
 }
 
 input:focus,
 select:focus {
-  border-color: #d6b45c;
-  box-shadow: 0 0 0 2px rgba(214, 180, 92, 0.15);
+  outline: 2px solid #d7b46a;
+  border-color: #d7b46a;
 }
-
-input::placeholder {
-  color: #8291a5;
-}
-
-/* BOTÕES */
 
 button {
-  background: #c5a34a;
-  color: #081426;
   border: none;
-  border-radius: 8px;
-  padding: 13px 18px;
-  font-weight: bold;
-  font-size: 14px;
+  background: #142541;
+  color: white;
+  padding: 12px 17px;
+  border-radius: 7px;
   cursor: pointer;
-  margin: 8px 5px 0 0;
-  transition: 0.2s ease;
+  font-weight: bold;
+  margin: 12px 5px 0 0;
+  transition: 0.2s;
 }
 
 button:hover {
-  background: #e2c675;
-  transform: translateY(-2px);
+  background: #263f65;
 }
 
-button:active {
-  transform: scale(0.98);
+#registar {
+  background: #d7b46a;
+  color: #142541;
 }
 
-/* ÁREA DE ACESSO */
-
-#acesso {
-  max-width: 500px;
-  width: 100%;
-  margin: 30px auto;
-}
-
-#acesso button {
-  width: 100%;
-  margin: 8px 0;
+#registar:hover {
+  background: #c5a052;
 }
 
 #mensagemAcesso {
-  margin-top: 18px;
-  text-align: center;
-  line-height: 1.5;
+  margin-top: 15px;
+  color: #56647a;
 }
 
-/* PAINEL FINANCEIRO */
-
-#painelFinanceiro {
+.dashboard {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
 }
 
-#painelFinanceiro[hidden] {
-  display: none !important;
+.dashboard-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  padding: 10px 2px;
 }
 
-/* SALDO */
+.dashboard-heading h2 {
+  color: #142541;
+  font-size: 25px;
+}
 
-#resultado {
-  font-size: 34px;
+.dashboard-heading p,
+.subtitulo {
+  color: #748095;
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.estado {
+  background: #e5f4eb;
+  color: #247346;
+  border-radius: 20px;
+  padding: 8px 13px;
+  font-size: 12px;
   font-weight: bold;
-  color: #d6b45c;
-  margin: 12px 0;
 }
 
-#situacao {
-  font-weight: bold;
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
-/* TOTAIS */
+.card-financeiro {
+  background: #142541;
+  color: white;
+  padding: 23px;
+  border-radius: 12px;
+  min-width: 0;
+}
+
+.card-financeiro span {
+  color: #d6dce6;
+  font-size: 14px;
+}
+
+.card-financeiro h3 {
+  color: #e2c27d;
+  font-size: 23px;
+  margin-top: 14px;
+  overflow-wrap: anywhere;
+}
 
 .detalhes {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 15px 0;
-  border-top: 1px solid #344b68;
-}
-
-.detalhes span {
-  color: #b9c3d0;
+  border-bottom: 1px solid #edf0f4;
+  padding: 13px 0;
 }
 
 .detalhes strong {
-  color: #ffffff;
+  text-align: right;
+  color: #142541;
 }
 
-/* HISTÓRICO */
+#resultado {
+  color: #c49b4d;
+  font-size: 28px;
+  margin: 12px 0;
+}
+
+#situacao {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
 
 #historico {
   list-style: none;
 }
 
 #historico li {
-  background: #09182b;
-  border: 1px solid #344b68;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 12px;
-  color: #e3eaf2;
-  line-height: 1.6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 13px 0;
+  border-bottom: 1px solid #edf0f4;
+}
+
+#historico li span {
+  flex: 1;
+  min-width: 180px;
   overflow-wrap: anywhere;
 }
 
-#historico button {
-  font-size: 12px;
-  padding: 9px 12px;
+#historico li button {
+  margin-top: 0;
 }
 
-/* RODAPÉ */
+#historico li button:last-child {
+  background: #a43e3e;
+}
+
+#graficoFinanceiro {
+  display: block;
+  width: 100%;
+  max-height: 280px;
+  margin-top: 15px;
+}
+
+.botao-sair {
+  background: #a43e3e;
+  align-self: flex-start;
+  margin-bottom: 15px;
+}
 
 footer {
   text-align: center;
-  color: #8291a5;
-  font-size: 12px;
-  padding: 30px 10px;
-  margin-top: 20px;
-  border-top: 1px solid #243b58;
+  padding: 25px 10px;
+  color: #758096;
+  font-size: 13px;
 }
 
-/* TELEMÓVEIS */
-
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   body {
     padding: 12px;
   }
 
   header {
-    padding: 25px 10px;
+    padding: 27px 15px;
   }
 
   header h1 {
-    font-size: 29px;
+    font-size: 27px;
   }
 
-  section.resultado {
-    padding: 18px;
+  .dashboard-cards {
+    grid-template-columns: 1fr;
   }
 
-  h2 {
-     #acesso[hidden],
-#painelFinanceiro[hidden] {
-  display: none !important;
-}
-    font-size: 19px;
+  .card-financeiro h3 {
+    font-size: 21px;
   }
 
-  #resultado {
-    font-size: 28px;
+  .resultado {
+    padding: 19px;
   }
 
-  button {
-    padding: 12px;
-  }
-
-  .detalhes {
-    font-size: 13px;
+  #historico li {
+    align-items: flex-start;
   }
 }
