@@ -17,7 +17,7 @@
 
     <main>
 
-      <!-- ÁREA DE ACESSO -->
+      <!-- ACESSO -->
       <section class="resultado" id="acesso">
         <h2>Acesso à CN Finance</h2>
 
@@ -33,9 +33,67 @@
         <p id="mensagemAcesso">Cria uma conta ou inicia sessão.</p>
       </section>
 
-      <!-- ÁREA FINANCEIRA -->
+      <!-- PAINEL FINANCEIRO -->
       <div id="painelFinanceiro" hidden>
 
+        <!-- DASHBOARD -->
+        <section class="dashboard">
+          <div class="dashboard-heading">
+            <div>
+              <h2>Dashboard</h2>
+              <p>Visão geral da tua situação financeira.</p>
+            </div>
+            <span class="estado">Conta activa</span>
+          </div>
+
+          <div class="dashboard-cards">
+
+            <div class="card-financeiro">
+              <span>Saldo total</span>
+              <h3 id="dashSaldo">0,00 MT</h3>
+            </div>
+
+            <div class="card-financeiro">
+              <span>Total de receitas</span>
+              <h3 id="dashReceitas">0,00 MT</h3>
+            </div>
+
+            <div class="card-financeiro">
+              <span>Total de despesas</span>
+              <h3 id="dashDespesas">0,00 MT</h3>
+            </div>
+
+          </div>
+
+          <div class="resultado">
+            <h3>Receitas vs. Despesas</h3>
+            <p class="subtitulo">Comparação do mês actual</p>
+            <canvas id="graficoFinanceiro"></canvas>
+            <p id="mensagemGrafico" class="subtitulo"></p>
+          </div>
+
+          <div class="resultado">
+            <h3>Resumo mensal</h3>
+            <p id="mesAtual">Mês actual</p>
+
+            <div class="detalhes">
+              <span>Receitas do mês</span>
+              <strong id="mesReceitas">0,00 MT</strong>
+            </div>
+
+            <div class="detalhes">
+              <span>Despesas do mês</span>
+              <strong id="mesDespesas">0,00 MT</strong>
+            </div>
+
+            <div class="detalhes">
+              <span>Resultado do mês</span>
+              <strong id="mesResultado">0,00 MT</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- ADICIONAR MOVIMENTO -->
         <section class="resultado">
           <h2>Gestão Financeira</h2>
 
@@ -54,7 +112,9 @@
           <button type="button" id="adicionar">Adicionar movimento</button>
         </section>
 
+        <!-- RESUMO FINANCEIRO -->
         <section class="resultado">
+          <h2>Resumo financeiro</h2>
           <p>Saldo financeiro</p>
           <h2 id="resultado">0,00 MT</h2>
           <p id="situacao">Adiciona o teu primeiro movimento.</p>
@@ -70,6 +130,7 @@
           </div>
         </section>
 
+        <!-- HISTÓRICO -->
         <section class="resultado">
           <h2>Histórico de movimentos</h2>
           <ul id="historico">
@@ -77,7 +138,9 @@
           </ul>
         </section>
 
-        <button type="button" id="sair">Terminar sessão</button>
+        <button type="button" id="sair" class="botao-sair">
+          Terminar sessão
+        </button>
 
       </div>
     </main>
