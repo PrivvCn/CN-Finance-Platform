@@ -10,6 +10,7 @@
 <body>
   <div class="app">
 
+    <!-- ACESSO -->
     <section class="resultado" id="acesso">
       <header>
         <h1>CN Finance</h1>
@@ -30,8 +31,8 @@
       <p id="mensagemAcesso">Cria uma conta ou inicia sessão.</p>
     </section>
 
+    <!-- PAINEL FINANCEIRO -->
     <div id="painelFinanceiro" hidden>
-
       <div class="estrutura">
 
         <!-- MENU LATERAL -->
@@ -84,7 +85,9 @@
               <p>Visão geral da tua situação financeira.</p>
             </div>
 
+            <!-- INDICADORES -->
             <div class="dashboard-cards">
+
               <div class="card-financeiro">
                 <span>Saldo total</span>
                 <h3 id="dashSaldo">0,00 MT</h3>
@@ -99,10 +102,24 @@
                 <span>Total de despesas</span>
                 <h3 id="dashDespesas">0,00 MT</h3>
               </div>
+
             </div>
 
+            <!-- GRÁFICO -->
+            <section class="resultado">
+              <h3>Desempenho financeiro</h3>
+              <p class="subtitulo">
+                Comparação entre receitas e despesas.
+              </p>
+
+              <canvas id="graficoFinanceiro"></canvas>
+              <p id="mensagemGrafico" class="subtitulo"></p>
+            </section>
+
+            <!-- RESUMO -->
             <section class="resultado">
               <h3>Resumo financeiro</h3>
+
               <p>Saldo financeiro</p>
               <h2 id="resultado">0,00 MT</h2>
               <p id="situacao">A carregar...</p>
@@ -116,6 +133,23 @@
                 <span>Total de despesas</span>
                 <strong id="totalDespesas">0,00 MT</strong>
               </div>
+            </section>
+
+            <!-- MOVIMENTOS RECENTES -->
+            <section class="resultado">
+              <h3>Movimentos recentes</h3>
+              <p class="subtitulo">
+                Acompanha as últimas actividades financeiras.
+              </p>
+
+              <ul id="movimentosRecentes">
+                <li>A carregar movimentos recentes...</li>
+              </ul>
+
+              <button type="button" class="nav-btn"
+                data-pagina="historico">
+                Ver todo o histórico →
+              </button>
             </section>
 
           </section>
@@ -132,7 +166,8 @@
               <h3>Adicionar movimento</h3>
 
               <label for="descricao">Descrição do movimento</label>
-              <input id="descricao" type="text" placeholder="Ex.: Venda de serviços">
+              <input id="descricao" type="text"
+                placeholder="Ex.: Venda de serviços">
 
               <label for="tipo">Tipo de movimento</label>
               <select id="tipo">
@@ -141,9 +176,12 @@
               </select>
 
               <label for="valor">Valor (MT)</label>
-              <input id="valor" type="number" min="0.01" step="0.01" placeholder="Ex.: 15000">
+              <input id="valor" type="number" min="0.01"
+                step="0.01" placeholder="Ex.: 15000">
 
-              <button type="button" id="adicionar">Adicionar movimento</button>
+              <button type="button" id="adicionar">
+                Adicionar movimento
+              </button>
             </section>
 
           </section>
@@ -157,16 +195,12 @@
             </div>
 
             <section class="resultado">
-              <h3>Receitas vs. Despesas</h3>
-              <p class="subtitulo">Comparação de todos os movimentos</p>
-              <canvas id="graficoFinanceiro"></canvas>
-              <p id="mensagemGrafico" class="subtitulo"></p>
-            </section>
-
-            <section class="resultado">
               <h3>Resumo mensal</h3>
 
-              <label for="mesSelecionado">Seleccionar mês:</label>
+              <label for="mesSelecionado">
+                Seleccionar mês:
+              </label>
+
               <input type="month" id="mesSelecionado">
 
               <p id="mesAtual">Mês seleccionado</p>
@@ -199,6 +233,7 @@
 
             <section class="resultado">
               <h3>Todos os movimentos</h3>
+
               <ul id="historico">
                 <li>Ainda não existem movimentos.</li>
               </ul>
@@ -242,12 +277,17 @@
   <script src="script.js"></script>
 
   <script>
-    const botoesNavegacao = document.querySelectorAll(".nav-btn");
-    const paginas = document.querySelectorAll(".pagina");
+    const botoesNavegacao =
+      document.querySelectorAll(".nav-btn");
+
+    const paginas =
+      document.querySelectorAll(".pagina");
 
     botoesNavegacao.forEach(botao => {
       botao.addEventListener("click", () => {
         const destino = botao.dataset.pagina;
+
+        if (!destino) return;
 
         paginas.forEach(pagina => {
           pagina.classList.toggle(
@@ -256,11 +296,13 @@
           );
         });
 
-        botoesNavegacao.forEach(item => {
-          item.classList.toggle("ativo", item === botao);
-        });
+        document.querySelectorAll(".nav-btn[data-pagina]")
+          .forEach(item => {
+            item.classList.toggle("ativo", item === botao);
+          });
 
-        if (destino === "relatorios") {
+        if (destino === "dashboard" ||
+            destino === "relatorios") {
           window.dispatchEvent(new Event("resize"));
         }
       });
@@ -271,5 +313,6 @@
         document.getElementById("sair").click();
       });
   </script>
+
 </body>
 </html>
