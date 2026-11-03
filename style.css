@@ -13,40 +13,193 @@ body {
   font-family: Arial, sans-serif;
   background: #f3f5f9;
   color: #17243b;
-  padding: 25px 15px;
 }
 
 .app {
   width: 100%;
-  max-width: 1050px;
-  margin: auto;
+  min-height: 100vh;
 }
 
-header {
+/* ACESSO */
+
+#acesso {
+  max-width: 480px;
+  margin: 70px auto;
+  padding: 25px;
+}
+
+#acesso header {
   background: #101e36;
   color: white;
   text-align: center;
-  padding: 35px 20px;
-  border-radius: 14px;
+  padding: 30px 15px;
+  border-radius: 12px;
   margin-bottom: 25px;
 }
 
-header h1 {
-  font-size: 32px;
+#acesso header h1 {
   color: #d7b46a;
-  letter-spacing: 1px;
 }
 
-header p {
-  margin-top: 9px;
-  color: #e1e5ed;
+#acesso header p {
+  margin-top: 8px;
 }
 
-main {
+/* ESTRUTURA */
+
+.estrutura {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* MENU LATERAL */
+
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: #101e36;
+  color: white;
+  padding: 25px 15px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
 }
+
+.marca {
+  text-align: center;
+  padding: 15px 5px 35px;
+  border-bottom: 1px solid #34445e;
+}
+
+.marca h1 {
+  color: #d7b46a;
+  font-size: 25px;
+}
+
+.marca p {
+  color: #e1e5ed;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 30px;
+}
+
+.nav-btn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: #e1e5ed;
+  padding: 15px;
+  margin: 0;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.nav-btn span {
+  display: inline-block;
+  width: 32px;
+  color: #d7b46a;
+  font-size: 20px;
+}
+
+.nav-btn:hover,
+.nav-btn.ativo {
+  background: #263750;
+  color: #e2c27d;
+}
+
+.botao-sair {
+  margin-top: auto;
+  background: #a43e3e;
+  width: 100%;
+}
+
+/* CONTEÚDO */
+
+.conteudo {
+  flex: 1;
+  min-width: 0;
+  padding: 25px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 5px 25px;
+  color: #748095;
+}
+
+.estado {
+  background: #e5f4eb;
+  color: #247346;
+  border-radius: 20px;
+  padding: 8px 13px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.titulo-pagina {
+  margin: 15px 0 25px;
+}
+
+.titulo-pagina h2 {
+  font-size: 28px;
+  color: #142541;
+}
+
+.titulo-pagina p {
+  color: #748095;
+  margin-top: 7px;
+}
+
+/* PÁGINAS */
+
+.pagina {
+  display: none;
+}
+
+.pagina.ativa {
+  display: block;
+}
+
+/* CARTÕES */
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.card-financeiro {
+  background: #142541;
+  color: white;
+  padding: 23px;
+  border-radius: 12px;
+  min-width: 0;
+}
+
+.card-financeiro span {
+  color: #d6dce6;
+  font-size: 14px;
+}
+
+.card-financeiro h3 {
+  color: #e2c27d;
+  font-size: 23px;
+  margin-top: 14px;
+  overflow-wrap: anywhere;
+}
+
+/* CARTÕES BRANCOS */
 
 .resultado {
   background: white;
@@ -56,15 +209,19 @@ main {
   margin-bottom: 20px;
 }
 
-.resultado h2 {
-  color: #142541;
-  margin-bottom: 18px;
-}
-
+.resultado h2,
 .resultado h3 {
   color: #142541;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
 }
+
+.subtitulo {
+  color: #748095;
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+/* FORMULÁRIOS */
 
 label {
   display: block;
@@ -90,6 +247,8 @@ select:focus {
   border-color: #d7b46a;
 }
 
+/* BOTÕES */
+
 button {
   border: none;
   background: #142541;
@@ -111,76 +270,7 @@ button:hover {
   color: #142541;
 }
 
-#registar:hover {
-  background: #c5a052;
-}
-
-#mensagemAcesso {
-  margin-top: 15px;
-  color: #56647a;
-}
-
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.dashboard-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  flex-wrap: wrap;
-  padding: 10px 2px;
-}
-
-.dashboard-heading h2 {
-  color: #142541;
-  font-size: 25px;
-}
-
-.dashboard-heading p,
-.subtitulo {
-  color: #748095;
-  margin-top: 6px;
-  font-size: 14px;
-}
-
-.estado {
-  background: #e5f4eb;
-  color: #247346;
-  border-radius: 20px;
-  padding: 8px 13px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.dashboard-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.card-financeiro {
-  background: #142541;
-  color: white;
-  padding: 23px;
-  border-radius: 12px;
-  min-width: 0;
-}
-
-.card-financeiro span {
-  color: #d6dce6;
-  font-size: 14px;
-}
-
-.card-financeiro h3 {
-  color: #e2c27d;
-  font-size: 23px;
-  margin-top: 14px;
-  overflow-wrap: anywhere;
-}
+/* RESUMO */
 
 .detalhes {
   display: flex;
@@ -206,6 +296,8 @@ button:hover {
   font-weight: bold;
   margin-bottom: 15px;
 }
+
+/* HISTÓRICO */
 
 #historico {
   list-style: none;
@@ -235,6 +327,8 @@ button:hover {
   background: #a43e3e;
 }
 
+/* GRÁFICO */
+
 #graficoFinanceiro {
   display: block;
   width: 100%;
@@ -242,11 +336,7 @@ button:hover {
   margin-top: 15px;
 }
 
-.botao-sair {
-  background: #a43e3e;
-  align-self: flex-start;
-  margin-bottom: 15px;
-}
+/* RODAPÉ */
 
 footer {
   text-align: center;
@@ -255,17 +345,52 @@ footer {
   font-size: 13px;
 }
 
-@media (max-width: 700px) {
-  body {
-    padding: 12px;
+/* TELEMÓVEIS */
+
+@media (max-width: 800px) {
+  .estrutura {
+    flex-direction: column;
   }
 
-  header {
-    padding: 27px 15px;
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    position: relative;
+    padding: 15px;
   }
 
-  header h1 {
-    font-size: 27px;
+  .marca {
+    padding: 8px 5px 15px;
+  }
+
+  .sidebar nav {
+    flex-direction: row;
+    overflow-x: auto;
+    margin-top: 15px;
+    gap: 5px;
+  }
+
+  .nav-btn {
+    min-width: max-content;
+    width: auto;
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .nav-btn span {
+    width: auto;
+    margin-right: 5px;
+  }
+
+  .botao-sair {
+    margin-top: 15px;
+    width: auto;
+    align-self: flex-start;
+  }
+
+  .conteudo {
+    padding: 15px;
   }
 
   .dashboard-cards {
@@ -275,9 +400,19 @@ footer {
   .card-financeiro h3 {
     font-size: 21px;
   }
+}
+
+@media (max-width: 450px) {
+  .topbar {
+    font-size: 12px;
+  }
+
+  .titulo-pagina h2 {
+    font-size: 24px;
+  }
 
   .resultado {
-    padding: 19px;
+    padding: 18px;
   }
 
   #historico li {
