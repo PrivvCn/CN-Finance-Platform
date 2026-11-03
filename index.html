@@ -10,143 +10,266 @@
 <body>
   <div class="app">
 
-    <header>
-      <h1>CN Finance</h1>
-      <p>Command. Navigate. Succeed.</p>
-    </header>
+    <section class="resultado" id="acesso">
+      <header>
+        <h1>CN Finance</h1>
+        <p>Command. Navigate. Succeed.</p>
+      </header>
 
-    <main>
+      <h2>Acesso à CN Finance</h2>
 
-      <section class="resultado" id="acesso">
-        <h2>Acesso à CN Finance</h2>
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="O teu email">
 
-        <label for="email">Email</label>
-        <input id="email" type="email" placeholder="O teu email">
+      <label for="senha">Palavra-passe</label>
+      <input id="senha" type="password" placeholder="A tua palavra-passe">
 
-        <label for="senha">Palavra-passe</label>
-        <input id="senha" type="password" placeholder="A tua palavra-passe">
+      <button type="button" id="registar">Criar conta</button>
+      <button type="button" id="entrar">Iniciar sessão</button>
 
-        <button type="button" id="registar">Criar conta</button>
-        <button type="button" id="entrar">Iniciar sessão</button>
+      <p id="mensagemAcesso">Cria uma conta ou inicia sessão.</p>
+    </section>
 
-        <p id="mensagemAcesso">Cria uma conta ou inicia sessão.</p>
-      </section>
+    <div id="painelFinanceiro" hidden>
 
-      <div id="painelFinanceiro" hidden>
+      <div class="estrutura">
 
-        <section class="dashboard">
+        <!-- MENU LATERAL -->
+        <aside class="sidebar">
+          <div class="marca">
+            <h1>CN Finance</h1>
+            <p>Command. Navigate. Succeed.</p>
+          </div>
 
-          <div class="dashboard-heading">
-            <div>
+          <nav>
+            <button class="nav-btn ativo" data-pagina="dashboard">
+              <span>⌂</span> Dashboard
+            </button>
+
+            <button class="nav-btn" data-pagina="movimentos">
+              <span>▣</span> Movimentos
+            </button>
+
+            <button class="nav-btn" data-pagina="relatorios">
+              <span>▥</span> Relatórios
+            </button>
+
+            <button class="nav-btn" data-pagina="historico">
+              <span>◷</span> Histórico
+            </button>
+
+            <button class="nav-btn" data-pagina="definicoes">
+              <span>⚙</span> Definições
+            </button>
+          </nav>
+
+          <button type="button" id="sair" class="botao-sair">
+            ↪ Terminar sessão
+          </button>
+        </aside>
+
+        <!-- CONTEÚDO -->
+        <div class="conteudo">
+
+          <div class="topbar">
+            <span>Área financeira</span>
+            <span class="estado">● Conta activa</span>
+          </div>
+
+          <!-- DASHBOARD -->
+          <section class="pagina ativa" id="pagina-dashboard">
+
+            <div class="titulo-pagina">
               <h2>Dashboard</h2>
               <p>Visão geral da tua situação financeira.</p>
             </div>
-            <span class="estado">Conta activa</span>
-          </div>
 
-          <div class="dashboard-cards">
-            <div class="card-financeiro">
-              <span>Saldo total</span>
-              <h3 id="dashSaldo">0,00 MT</h3>
+            <div class="dashboard-cards">
+              <div class="card-financeiro">
+                <span>Saldo total</span>
+                <h3 id="dashSaldo">0,00 MT</h3>
+              </div>
+
+              <div class="card-financeiro">
+                <span>Total de receitas</span>
+                <h3 id="dashReceitas">0,00 MT</h3>
+              </div>
+
+              <div class="card-financeiro">
+                <span>Total de despesas</span>
+                <h3 id="dashDespesas">0,00 MT</h3>
+              </div>
             </div>
 
-            <div class="card-financeiro">
-              <span>Total de receitas</span>
-              <h3 id="dashReceitas">0,00 MT</h3>
+            <section class="resultado">
+              <h3>Resumo financeiro</h3>
+              <p>Saldo financeiro</p>
+              <h2 id="resultado">0,00 MT</h2>
+              <p id="situacao">A carregar...</p>
+
+              <div class="detalhes">
+                <span>Total de receitas</span>
+                <strong id="totalReceitas">0,00 MT</strong>
+              </div>
+
+              <div class="detalhes">
+                <span>Total de despesas</span>
+                <strong id="totalDespesas">0,00 MT</strong>
+              </div>
+            </section>
+
+          </section>
+
+          <!-- MOVIMENTOS -->
+          <section class="pagina" id="pagina-movimentos">
+
+            <div class="titulo-pagina">
+              <h2>Movimentos</h2>
+              <p>Regista e organiza as tuas receitas e despesas.</p>
             </div>
 
-            <div class="card-financeiro">
-              <span>Total de despesas</span>
-              <h3 id="dashDespesas">0,00 MT</h3>
-            </div>
-          </div>
+            <section class="resultado">
+              <h3>Adicionar movimento</h3>
 
-          <div class="resultado">
-            <h3>Receitas vs. Despesas</h3>
-            <p class="subtitulo">Comparação de todos os movimentos</p>
-            <canvas id="graficoFinanceiro"></canvas>
-            <p id="mensagemGrafico" class="subtitulo"></p>
-          </div>
+              <label for="descricao">Descrição do movimento</label>
+              <input id="descricao" type="text" placeholder="Ex.: Venda de serviços">
 
-          <div class="resultado">
-            <h3>Resumo mensal</h3>
+              <label for="tipo">Tipo de movimento</label>
+              <select id="tipo">
+                <option value="receita">Receita</option>
+                <option value="despesa">Despesa</option>
+              </select>
 
-            <label for="mesSelecionado">Seleccionar mês:</label>
-            <input type="month" id="mesSelecionado">
+              <label for="valor">Valor (MT)</label>
+              <input id="valor" type="number" min="0.01" step="0.01" placeholder="Ex.: 15000">
 
-            <p id="mesAtual">Mês seleccionado</p>
+              <button type="button" id="adicionar">Adicionar movimento</button>
+            </section>
 
-            <div class="detalhes">
-              <span>Receitas do mês</span>
-              <strong id="mesReceitas">0,00 MT</strong>
-            </div>
+          </section>
 
-            <div class="detalhes">
-              <span>Despesas do mês</span>
-              <strong id="mesDespesas">0,00 MT</strong>
+          <!-- RELATÓRIOS -->
+          <section class="pagina" id="pagina-relatorios">
+
+            <div class="titulo-pagina">
+              <h2>Relatórios</h2>
+              <p>Analisa o desempenho financeiro.</p>
             </div>
 
-            <div class="detalhes">
-              <span>Resultado do mês</span>
-              <strong id="mesResultado">0,00 MT</strong>
+            <section class="resultado">
+              <h3>Receitas vs. Despesas</h3>
+              <p class="subtitulo">Comparação de todos os movimentos</p>
+              <canvas id="graficoFinanceiro"></canvas>
+              <p id="mensagemGrafico" class="subtitulo"></p>
+            </section>
+
+            <section class="resultado">
+              <h3>Resumo mensal</h3>
+
+              <label for="mesSelecionado">Seleccionar mês:</label>
+              <input type="month" id="mesSelecionado">
+
+              <p id="mesAtual">Mês seleccionado</p>
+
+              <div class="detalhes">
+                <span>Receitas do mês</span>
+                <strong id="mesReceitas">0,00 MT</strong>
+              </div>
+
+              <div class="detalhes">
+                <span>Despesas do mês</span>
+                <strong id="mesDespesas">0,00 MT</strong>
+              </div>
+
+              <div class="detalhes">
+                <span>Resultado do mês</span>
+                <strong id="mesResultado">0,00 MT</strong>
+              </div>
+            </section>
+
+          </section>
+
+          <!-- HISTÓRICO -->
+          <section class="pagina" id="pagina-historico">
+
+            <div class="titulo-pagina">
+              <h2>Histórico</h2>
+              <p>Consulta, edita ou elimina movimentos.</p>
             </div>
-          </div>
 
-        </section>
+            <section class="resultado">
+              <h3>Todos os movimentos</h3>
+              <ul id="historico">
+                <li>Ainda não existem movimentos.</li>
+              </ul>
+            </section>
 
-        <section class="resultado">
-          <h2>Gestão Financeira</h2>
+          </section>
 
-          <label for="descricao">Descrição do movimento</label>
-          <input id="descricao" type="text" placeholder="Ex.: Venda de serviços">
+          <!-- DEFINIÇÕES -->
+          <section class="pagina" id="pagina-definicoes">
 
-          <label for="tipo">Tipo de movimento</label>
-          <select id="tipo">
-            <option value="receita">Receita</option>
-            <option value="despesa">Despesa</option>
-          </select>
+            <div class="titulo-pagina">
+              <h2>Definições</h2>
+              <p>Informações e opções da tua conta.</p>
+            </div>
 
-          <label for="valor">Valor (MT)</label>
-          <input id="valor" type="number" min="0.01" step="0.01" placeholder="Ex.: 15000">
+            <section class="resultado">
+              <h3>Conta CN Finance</h3>
+              <p>Estado da conta: <strong>Activa</strong></p>
+              <p>Plataforma: CN Finance</p>
+              <p>Versão: 1.0</p>
+            </section>
 
-          <button type="button" id="adicionar">Adicionar movimento</button>
-        </section>
+            <section class="resultado">
+              <h3>Sessão</h3>
+              <p>Termina a tua sessão de forma segura.</p>
+              <button type="button" id="sairDefinicoes">
+                Terminar sessão
+              </button>
+            </section>
 
-        <section class="resultado">
-          <h2>Resumo financeiro</h2>
-          <p>Saldo financeiro</p>
-          <h2 id="resultado">0,00 MT</h2>
-          <p id="situacao">Adiciona o teu primeiro movimento.</p>
+          </section>
 
-          <div class="detalhes">
-            <span>Total de receitas</span>
-            <strong id="totalReceitas">0,00 MT</strong>
-          </div>
+          <footer>CN Finance © 2026</footer>
 
-          <div class="detalhes">
-            <span>Total de despesas</span>
-            <strong id="totalDespesas">0,00 MT</strong>
-          </div>
-        </section>
-
-        <section class="resultado">
-          <h2>Histórico de movimentos</h2>
-          <ul id="historico">
-            <li>Ainda não existem movimentos.</li>
-          </ul>
-        </section>
-
-        <button type="button" id="sair" class="botao-sair">
-          Terminar sessão
-        </button>
-
+        </div>
       </div>
-    </main>
-
-    <footer>CN Finance © 2026</footer>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
+
+  <script>
+    const botoesNavegacao = document.querySelectorAll(".nav-btn");
+    const paginas = document.querySelectorAll(".pagina");
+
+    botoesNavegacao.forEach(botao => {
+      botao.addEventListener("click", () => {
+        const destino = botao.dataset.pagina;
+
+        paginas.forEach(pagina => {
+          pagina.classList.toggle(
+            "ativa",
+            pagina.id === "pagina-" + destino
+          );
+        });
+
+        botoesNavegacao.forEach(item => {
+          item.classList.toggle("ativo", item === botao);
+        });
+
+        if (destino === "relatorios") {
+          window.dispatchEvent(new Event("resize"));
+        }
+      });
+    });
+
+    document.getElementById("sairDefinicoes")
+      .addEventListener("click", () => {
+        document.getElementById("sair").click();
+      });
+  </script>
 </body>
 </html>
