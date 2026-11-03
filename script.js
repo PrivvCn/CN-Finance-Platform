@@ -36,6 +36,9 @@ const dashSaldo = document.getElementById("dashSaldo");
 const dashReceitas = document.getElementById("dashReceitas");
 const dashDespesas = document.getElementById("dashDespesas");
 
+const movimentosRecentesElemento =
+  document.getElementById("movimentosRecentes");
+
 const mesAtualElemento = document.getElementById("mesAtual");
 const mesReceitasElemento = document.getElementById("mesReceitas");
 const mesDespesasElemento = document.getElementById("mesDespesas");
@@ -112,7 +115,11 @@ async function registar() {
     }
   });
 
-  mensagem(error ? error.message : "Conta criada! Confirma o teu email.");
+  mensagem(
+    error
+      ? error.message
+      : "Conta criada! Confirma o teu email."
+  );
 }
 
 // =====================================
@@ -142,6 +149,7 @@ async function entrar() {
 
 async function sair() {
   const { error } = await supabaseClient.auth.signOut();
+
   if (error) mensagem(error.message);
 }
 
@@ -190,6 +198,41 @@ function atualizarResumo() {
   atualizarResumoMensal();
   desenharGrafico(totais.receitas, totais.despesas);
   atualizarHistorico();
+  atualizarMovimentosRecentes();
+}
+
+// =====================================
+// MOVIMENTOS RECENTES
+// =====================================
+
+function atualizarMovimentosRecentes() {
+  if (!movimentosRecentesElemento) return;
+
+  movimentosRecentesElemento.innerHTML = "";
+
+  if (movimentos.length === 0) {
+    const item = document.createElement("li");
+    item.textContent = "Ainda não existem movimentos.";
+    movimentosRecentesElemento.appendChild(item);
+    return;
+  }
+
+  // Mostra apenas os cinco movimentos mais recentes.
+  movimentos.slice(0, 5).forEach(m => {
+    const item = document.createElement("li");
+
+    const descricao = document.createElement("strong");
+    descricao.textContent = m.descricao;
+
+    const detalhe = document.createElement("span");
+    detalhe.textContent =
+      (m.tipo === "receita" ? "Receita: " : "Despesa: ") +
+      formatarValor(m.valor);
+
+    item.append(descricao, document.createElement("br"), detalhe);
+
+    movimentosRecentesElemento.appendChild(item);
+  });
 }
 
 // =====================================
@@ -200,7 +243,6 @@ function atualizarResumoMensal() {
   if (!mesSelecionado) return;
 
   const mes = mesSelecionado.value;
-
   if (!mes) return;
 
   const [ano, numeroMes] = mes.split("-").map(Number);
@@ -259,8 +301,18 @@ function desenharGrafico(receitas, despesas) {
   const larguraBarra = Math.min(75, largura / 5);
 
   const itens = [
-    { nome: "Receitas", valor: receitas, cor: "#d7b46a", x: largura * 0.30 },
-    { nome: "Despesas", valor: despesas, cor: "#263f65", x: largura * 0.70 }
+    {
+      nome: "Receitas",
+      valor: receitas,
+      cor: "#d7b46a",
+      x: largura * 0.30
+    },
+    {
+      nome: "Despesas",
+      valor: despesas,
+      cor: "#263f65",
+      x: largura * 0.70
+    }
   ];
 
   contexto.font = "13px Arial";
@@ -276,7 +328,9 @@ function desenharGrafico(receitas, despesas) {
 
     contexto.fillStyle = "#142541";
     contexto.fillText(
-      item.valor.toLocaleString("pt-MZ", { maximumFractionDigits: 0 }),
+      item.valor.toLocaleString("pt-MZ", {
+        maximumFractionDigits: 0
+      }),
       item.x,
       Math.max(y - 10, 15)
     );
@@ -293,7 +347,8 @@ function atualizarHistorico() {
   historicoElemento.innerHTML = "";
 
   if (movimentos.length === 0) {
-    historicoElemento.innerHTML = "<li>Ainda não existem movimentos.</li>";
+    historicoElemento.innerHTML =
+      "<li>Ainda não existem movimentos.</li>";
     return;
   }
 
@@ -301,7 +356,8 @@ function atualizarHistorico() {
     const item = document.createElement("li");
     const texto = document.createElement("span");
 
-    const tipoTexto = m.tipo === "receita" ? "Receita" : "Despesa";
+    const tipoTexto =
+      m.tipo === "receita" ? "Receita" : "Despesa";
 
     texto.textContent =
       `${m.descricao} — ${tipoTexto} — ${formatarValor(m.valor)}`;
@@ -381,7 +437,10 @@ async function editarMovimento(m) {
 
   const { error } = await supabaseClient
     .from("movimentos")
-    .update({ descricao: descricao.trim(), valor })
+    .update({
+      descricao: descricao.trim(),
+      valor
+    })
     .eq("id", m.id)
     .eq("user_id", utilizadorAtual.id);
 
@@ -420,10 +479,17 @@ async function eliminarMovimento(id) {
 // EVENTOS
 // =====================================
 
-document.getElementById("registar").addEventListener("click", registar);
-document.getElementById("entrar").addEventListener("click", entrar);
-document.getElementById("sair").addEventListener("click", sair);
-document.getElementById("adicionar").addEventListener("click", adicionarMovimento);
+document.getElementById("registar")
+  .addEventListener("click", registar);
+
+document.getElementById("entrar")
+  .addEventListener("click", entrar);
+
+document.getElementById("sair")
+  .addEventListener("click", sair);
+
+document.getElementById("adicionar")
+  .addEventListener("click", adicionarMovimento);
 
 if (mesSelecionado) {
   const agora = new Date();
@@ -466,7 +532,9 @@ async function iniciarAplicacao() {
   utilizadorAtual = data.session?.user || null;
   atualizarInterface();
 
-  if (utilizadorAtual) await carregarMovimentos();
+  if (utilizadorAtual) {
+    await carregarMovimentos();
+  }
 }
 
 iniciarAplicacao();
