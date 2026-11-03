@@ -1,4 +1,8 @@
 
+// =====================================
+// CONFIGURAÇÃO DO SUPABASE
+// =====================================
+
 const SUPABASE_URL = "https://zmjahwuaqkddbkbrqkdw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_xDCWQlrTKc0arXNQhqKqUw_u4A325XP";
 
@@ -7,7 +11,10 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_KEY
 );
 
-// Elementos da página
+// =====================================
+// ELEMENTOS DA PÁGINA
+// =====================================
+
 const acesso = document.getElementById("acesso");
 const painel = document.getElementById("painelFinanceiro");
 
@@ -25,8 +32,24 @@ const receitasElemento = document.getElementById("totalReceitas");
 const despesasElemento = document.getElementById("totalDespesas");
 const historicoElemento = document.getElementById("historico");
 
+const dashSaldo = document.getElementById("dashSaldo");
+const dashReceitas = document.getElementById("dashReceitas");
+const dashDespesas = document.getElementById("dashDespesas");
+
+const mesAtualElemento = document.getElementById("mesAtual");
+const mesReceitasElemento = document.getElementById("mesReceitas");
+const mesDespesasElemento = document.getElementById("mesDespesas");
+const mesResultadoElemento = document.getElementById("mesResultado");
+
+const grafico = document.getElementById("graficoFinanceiro");
+const mensagemGrafico = document.getElementById("mensagemGrafico");
+
 let utilizadorAtual = null;
 let movimentos = [];
+
+// =====================================
+// FUNÇÕES GERAIS
+// =====================================
 
 function mensagem(texto) {
   mensagemAcesso.textContent = texto;
@@ -46,7 +69,26 @@ function formatarValor(valor) {
   }) + " MT";
 }
 
-// Registar conta
+function obterTotais(lista) {
+  const receitas = lista
+    .filter(m => m.tipo === "receita")
+    .reduce((soma, m) => soma + Number(m.valor), 0);
+
+  const despesas = lista
+    .filter(m => m.tipo === "despesa")
+    .reduce((soma, m) => soma + Number(m.valor), 0);
+
+  return {
+    receitas,
+    despesas,
+    saldo: receitas - despesas
+  };
+}
+
+// =====================================
+// CRIAR CONTA
+// =====================================
+
 async function registar() {
   const email = emailInput.value.trim();
   const password = senhaInput.value;
@@ -77,7 +119,10 @@ async function registar() {
   }
 }
 
-// Iniciar sessão
+// =====================================
+// INICIAR SESSÃO
+// =====================================
+
 async function entrar() {
   const email = emailInput.value.trim();
   const password = senhaInput.value;
@@ -97,7 +142,10 @@ async function entrar() {
   }
 }
 
-// Terminar sessão
+// =====================================
+// TERMINAR SESSÃO
+// =====================================
+
 async function sair() {
   const { error } = await supabaseClient.auth.signOut();
 
@@ -106,7 +154,10 @@ async function sair() {
   }
 }
 
-// Carregar movimentos
+// =====================================
+// CARREGAR MOVIMENTOS
+// =====================================
+
 async function carregarMovimentos() {
   if (!utilizadorAtual) return;
 
@@ -126,26 +177,142 @@ async function carregarMovimentos() {
   atualizarResumo();
 }
 
-// Atualizar saldo e histórico
+// =====================================
+// ATUALIZAR RESUMO FINANCEIRO
+// =====================================
+
 function atualizarResumo() {
-  const receitas = movimentos
-    .filter(m => m.tipo === "receita")
-    .reduce((soma, m) => soma + Number(m.valor), 0);
+  const totais = obterTotais(movimentos);
 
-  const despesas = movimentos
-    .filter(m => m.tipo === "despesa")
-    .reduce((soma, m) => soma + Number(m.valor), 0);
+  saldoElemento.textContent = formatarValor(totais.saldo);
+  receitasElemento.textContent = formatarValor(totais.receitas);
+  despesasElemento.textContent = formatarValor(totais.despesas);
 
-  const saldo = receitas - despesas;
-
-  saldoElemento.textContent = formatarValor(saldo);
-  receitasElemento.textContent = formatarValor(receitas);
-  despesasElemento.textContent = formatarValor(despesas);
+  dashSaldo.textContent = formatarValor(totais.saldo);
+  dashReceitas.textContent = formatarValor(totais.receitas);
+  dashDespesas.textContent = formatarValor(totais.despesas);
 
   situacaoElemento.textContent =
-    saldo > 0 ? "Lucro" :
-    saldo < 0 ? "Prejuízo" : "Equilíbrio";
+    totais.saldo > 0 ? "Lucro" :
+    totais.saldo < 0 ? "Prejuízo" :
+    "Equilíbrio";
 
+  atualizarResumoMensal();
+  desenharGrafico(totais.receitas, totais.despesas);
+  atualizarHistorico();
+}
+
+// =====================================
+// RESUMO DO MÊS ATUAL
+// =====================================
+
+function atualizarResumoMensal() {
+  const agora = new Date();
+
+  const inicioMes = new Date(
+    agora.getFullYear(),
+    agora.getMonth(),
+    1
+  );
+
+  const proximoMes = new Date(
+    agora.getFullYear(),
+    agora.getMonth() + 1,
+    1
+  );
+
+  const movimentosDoMes = movimentos.filter(m => {
+    const data = new Date(m.created_at);
+    return data >= inicioMes && data < proximoMes;
+  });
+
+  const totais = obterTotais(movimentosDoMes);
+
+  mesAtualElemento.textContent = agora.toLocaleDateString("pt-MZ", {
+    month: "long",
+    year: "numeric"
+  });
+
+  mesReceitasElemento.textContent = formatarValor(totais.receitas);
+  mesDespesasElemento.textContent = formatarValor(totais.despesas);
+  mesResultadoElemento.textContent = formatarValor(totais.saldo);
+}
+
+// =====================================
+// GRÁFICO FINANCEIRO
+// =====================================
+
+function desenharGrafico(receitas, despesas) {
+  const contexto = grafico.getContext("2d");
+
+  const largura = grafico.clientWidth || 500;
+  const altura = 250;
+  const escala = window.devicePixelRatio || 1;
+
+  grafico.width = largura * escala;
+  grafico.height = altura * escala;
+
+  contexto.setTransform(escala, 0, 0, escala, 0, 0);
+  contexto.clearRect(0, 0, largura, altura);
+
+  if (receitas === 0 && despesas === 0) {
+    mensagemGrafico.textContent =
+      "Adiciona movimentos para visualizar o gráfico.";
+    return;
+  }
+
+  mensagemGrafico.textContent =
+    "Valores acumulados de todos os movimentos.";
+
+  const maximo = Math.max(receitas, despesas, 1);
+  const alturaMaxima = 150;
+  const base = 190;
+  const larguraBarra = Math.min(75, largura / 5);
+
+  const itens = [
+    {
+      nome: "Receitas",
+      valor: receitas,
+      cor: "#d7b46a",
+      x: largura * 0.30
+    },
+    {
+      nome: "Despesas",
+      valor: despesas,
+      cor: "#263f65",
+      x: largura * 0.70
+    }
+  ];
+
+  contexto.font = "13px Arial";
+  contexto.textAlign = "center";
+
+  itens.forEach(item => {
+    const alturaBarra = (item.valor / maximo) * alturaMaxima;
+    const x = item.x - larguraBarra / 2;
+    const y = base - alturaBarra;
+
+    contexto.fillStyle = item.cor;
+    contexto.fillRect(x, y, larguraBarra, alturaBarra);
+
+    contexto.fillStyle = "#142541";
+    contexto.fillText(
+      item.valor.toLocaleString("pt-MZ", {
+        maximumFractionDigits: 0
+      }),
+      item.x,
+      Math.max(y - 10, 15)
+    );
+
+    contexto.fillText(item.nome, item.x, 220);
+  });
+}
+
+// =====================================
+// HISTÓRICO
+// =====================================
+
+function atualizarHistorico() {
   historicoElemento.innerHTML = "";
 
   if (movimentos.length === 0) {
@@ -158,8 +325,11 @@ function atualizarResumo() {
     const item = document.createElement("li");
     const texto = document.createElement("span");
 
+    const tipoTexto =
+      m.tipo === "receita" ? "Receita" : "Despesa";
+
     texto.textContent =
-      `${m.descricao} — ${m.tipo} — ${formatarValor(m.valor)} `;
+      `${m.descricao} — ${tipoTexto} — ${formatarValor(m.valor)}`;
 
     const editar = document.createElement("button");
     editar.textContent = "Editar";
@@ -176,14 +346,22 @@ function atualizarResumo() {
   });
 }
 
-// Adicionar movimento
+// =====================================
+// ADICIONAR MOVIMENTO
+// =====================================
+
 async function adicionarMovimento() {
+  if (!utilizadorAtual) {
+    alert("Inicia sessão primeiro.");
+    return;
+  }
+
   const descricao = descricaoInput.value.trim();
   const tipo = tipoInput.value;
   const valor = Number(valorInput.value);
 
   if (!descricao || !Number.isFinite(valor) || valor <= 0) {
-    alert("Preenche corretamente todos os campos.");
+    alert("Preenche correctamente todos os campos.");
     return;
   }
 
@@ -208,12 +386,17 @@ async function adicionarMovimento() {
   await carregarMovimentos();
 }
 
-// Editar movimento
+// =====================================
+// EDITAR MOVIMENTO
+// =====================================
+
 async function editarMovimento(m) {
   const descricao = prompt("Nova descrição:", m.descricao);
+
   if (descricao === null) return;
 
   const valorTexto = prompt("Novo valor:", m.valor);
+
   if (valorTexto === null) return;
 
   const valor = Number(valorTexto);
@@ -241,7 +424,10 @@ async function editarMovimento(m) {
   await carregarMovimentos();
 }
 
-// Eliminar movimento
+// =====================================
+// ELIMINAR MOVIMENTO
+// =====================================
+
 async function eliminarMovimento(id) {
   if (!confirm("Queres mesmo eliminar este movimento?")) return;
 
@@ -260,13 +446,26 @@ async function eliminarMovimento(id) {
   await carregarMovimentos();
 }
 
-// Eventos dos botões
-document.getElementById("registar").addEventListener("click", registar);
-document.getElementById("entrar").addEventListener("click", entrar);
-document.getElementById("sair").addEventListener("click", sair);
-document.getElementById("adicionar").addEventListener("click", adicionarMovimento);
+// =====================================
+// EVENTOS DOS BOTÕES
+// =====================================
 
-// Acompanhar alterações da sessão
+document.getElementById("registar")
+  .addEventListener("click", registar);
+
+document.getElementById("entrar")
+  .addEventListener("click", entrar);
+
+document.getElementById("sair")
+  .addEventListener("click", sair);
+
+document.getElementById("adicionar")
+  .addEventListener("click", adicionarMovimento);
+
+// =====================================
+// ACOMPANHAR SESSÃO
+// =====================================
+
 supabaseClient.auth.onAuthStateChange((event, session) => {
   utilizadorAtual = session?.user || null;
   atualizarInterface();
@@ -279,10 +478,11 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
   }
 });
 
-// Verificar sessão ao abrir o site
-async function iniciarAplicacao() {
-  atualizarInterface();
+// =====================================
+// VERIFICAR SESSÃO AO ABRIR O SITE
+// =====================================
 
+async function iniciarAplicacao() {
   const { data, error } = await supabaseClient.auth.getSession();
 
   if (error) {
@@ -300,3 +500,15 @@ async function iniciarAplicacao() {
 }
 
 iniciarAplicacao();
+
+// =====================================
+// ACTUALIZAR GRÁFICO AO REDIMENSIONAR
+// =====================================
+
+window.addEventListener("resize", () => {
+  if (!painel.hidden) {
+    const totais = obterTotais(movimentos);
+    desenharGrafico(totais.receitas, totais.despesas);
+  }
+});
+
